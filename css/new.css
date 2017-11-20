@@ -3,6 +3,7 @@
 }
 
 #logo-mobile {
+    filter: invert(100%);
     display: none;
 }
 
@@ -175,8 +176,8 @@
 
 .main_menu {
     float: left;
-    height: 18px;
-    padding: 21px;
+    height: 17.5px;
+    padding: 22px;
     opacity: 0.4;
 }
 
@@ -326,8 +327,18 @@
     #logo-pc {
         display: none !important;
     }
-    .main_channel {}
-    .main_upload {}
+    .main_channel {
+	filter: invert(100%);
+	opacity: 1;
+    }
+    .main_menu {
+	filter: invert(100%);
+	opacity: 1;
+    }
+    .main_upload {
+	filter: invert(100%);
+	opacity: 1;
+    }
     .main .List .files {
         background-color: #FFFFFF;
     }
