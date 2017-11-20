@@ -2104,7 +2104,7 @@
                         ]),
 
                         h("div.linkSeparator", [
-                            ((ref1 = this.editable_title) != null ? ref1.editing : void 0) ? this.editable_title.render(this.row.title) : h("a.title.link", {
+                            ((ref1 = this.editable_title) != null ? ref1.editing : void 0) ? this.editable_title.render(this.row.title) : h("a.title.link.titly", {
                                 href: "#", // The link is interfering with the edit button!
                                 /*onclick: this.handleVideoClick,*/
                                 style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden",
@@ -2113,7 +2113,7 @@
                         ]),
 
                         h("div.linkSeparator", [
-                            ((ref1 = this.editable_image) != null ? ref1.editing : void 0) ? this.editable_image.render(this.row.image_link) : h("a.title.link", {
+                            ((ref1 = this.editable_image) != null ? ref1.editing : void 0) ? this.editable_image.render(this.row.image_link) : h("a.title.link.imgy", {
                                 href: "#", // The link is interfering with the edit button!
                                 /*onclick: this.handleVideoClick,*/
                                 style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden",
@@ -2122,7 +2122,7 @@
                         ]),
 
                         h("div.linkSeparator", [
-                            ((ref1 = this.editable_brief) != null ? ref1.editing : void 0) ? this.editable_brief.render(this.row.description) : h("a.title.link", {
+                            ((ref1 = this.editable_brief) != null ? ref1.editing : void 0) ? this.editable_brief.render(this.row.description) : h("a.title.link.briefy", {
                                 href: "#", // The link is interfering with the edit button!
                                 /*onclick: this.handleVideoClick,*/
                                 style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden;",
@@ -2147,10 +2147,11 @@
                         }, [this.status === "seeding" ? h("span", "seeding: ") : void 0, this.status === "downloading" || this.status === "partial" ? [h("span.downloaded", Text.formatSize(this.row.stats.bytes_downloaded)), " of "] : void 0, Text.formatSize(this.row.size)]), h("span.detail.added", {
                             title: Time.date(this.row.date_added, "long")
                         }, Time.since(this.row.date_added)), h("span.detail.uploader", [
-                            "by ", h("span.username", {
+                            "by ", h("a.username", {
+				href: "?Channel=" + this.row.cert_user_id,
                                 title: this.row.cert_user_id + ": " + this.row.directory
                             }, this.row.cert_user_id.split("@")[0])
-                        ]), this.status === "seeding" ? h("a.detail", h("a.link.filename", {
+                        ]), this.status === "seeding" ? h("a.detail.fileinfo", h("a.link.filename", {
                             href: "#Open+directory",
                             title: "Open directory",
                             onclick: this.handleOpenClick
@@ -2202,7 +2203,8 @@
         }
 
         MenuAll.prototype.getUserId = function() {
-            document.getElementById('debugger1').innerHTML = Page.site_info.cert_user_id;
+	    Page.setUrl("?Channel=" + Page.site_info.cert_user_id);
+	    document.getElementById('debugger1').innerHTML = Page.site_info.cert_user_id;
             Page.list.openVideoChannel();
             return this;
         };
@@ -2225,7 +2227,7 @@
         MenuAll.prototype.render = function() {
             return h("div.menu_left", [
                 h("ul.list-types-new", [
-                    h("li", "v0.1.1 ALPHA"),
+                    h("li", "v0.1.12 ALPHA"),
 
                     // Featured
                     h("li", [h("a.list-type", {
@@ -2974,10 +2976,13 @@
             } else {
                 url = base.href.replace(/.*?\?/, "");
                 this.history_state["url"] = url;
-                if (base.href.indexOf("Video") === -1) {
-                    this.route(url);
-                } else {
-                    this.videoRoute();
+
+                if (base.href.indexOf("Video") > -1) {
+		    this.videoRoute();
+                } else if (base.href.indexOf("Channel") > -1) {
+		    this.channelRoute();
+		} else {
+		    this.route(url);
                 };
             }
             this.projector.replace($("#List"), this.list.render);
@@ -2997,6 +3002,12 @@
             this.videoPlayer.render(vid_date_added, vid_user_directory);
             return this;
         };
+
+	ZeroUp.prototype.channelRoute = function() {
+	    var href_channel = base.href.split('=')[1];	
+	    document.getElementById('debugger1').innerHTML = href_channel;
+	    Page.list.openVideoChannel();
+	};
 
         ZeroUp.prototype.setPage = function(page_name) {
             this.state.page = page_name;
