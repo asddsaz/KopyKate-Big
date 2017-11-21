@@ -1807,7 +1807,7 @@
                     divComment = document.createElement("div");
                     divComment.setAttribute("class", "video_comment_single");
                     divComment.setAttribute("id", comment_id);
-                    divComment.innerHTML = "<div style='float: left'><img src='img/user_comment.png' style='float: left; opacity: 0.50; height: 50px'></img></div><div style='float: left; margin-left: 25px'><div style='color: #a0a0a0'>" + comment_user_id + "</div><div style='color: #a0a0a0'>" + comment_formatted_date + ": </div><div>" + comment_body + "</div>";
+                    divComment.innerHTML = "<div style='float: left'><img src='img/user.svg' style='float: left; opacity: 0.50; height: 50px'></img></div><div style='float: left; width: calc(100% - 60px); padding: 5px'><div style='color: #a0a0a0'>" + comment_user_id + "</div><div style='color: #a0a0a0'>" + comment_formatted_date + ": </div><div>" + comment_body + "</div>";
                     $videoCommentBox.appendChild(divComment);
 
                 };
@@ -2048,7 +2048,7 @@
             }
             ratio_color = this.getRatioColor(ratio);
             if ((ref = this.status) === "downloading" || ref === "partial") {
-                style = "box-shadow: inset " + (this.row.stats.downloaded_percent * 1.5) + "px 0px 0px #70fcd8";
+                style = "box-shadow: inset " + (this.row.stats.downloaded_percent * 1.5) + "px 0px 0px #9ce04c";
             } else {
                 style = "";
             }
@@ -2083,14 +2083,26 @@
                 ]),
 
                 // Video Link
-                h("div.linkJoiner", [
+                h("div.linkJoiner.videoimage", [
                     h("a.playVideo", {
                         href: "?Video=" + this.row.date_added + "_" + this.row.directory,
                         /*onclick: Page.handleLinkClick,*/
                         style: ""
                     }, [h("div.video_empty", {
                         style: 'background-image: url("' + this.row.image_link + '")'
-                    })])
+                    })]),
+(ref3 = this.status) === "inactive" || ref3 === "partial" ? h("a.add", {
+                            href: "#Add",
+                            title: "Download and seed",
+                            onclick: this.handleNeedClick
+                        }, "+ seed") : void 0, h("span.size", {
+                            classes: {
+                                downloading: this.status === "downloading",
+                                partial: this.status === "partial",
+                                seeding: this.status === "seeding"
+                            },
+                            style: style
+                        }, [this.status === "seeding" ? h("span", "seeding: ") : void 0, this.status === "downloading" || this.status === "partial" ? [h("span.downloaded", Text.formatSize(this.row.stats.bytes_downloaded)), " of "] : void 0, Text.formatSize(this.row.size)])
                 ]),
 
                 h("div.left-info", [h("div.linkJoiner", [h("div.linkSeparator", {
@@ -2133,21 +2145,10 @@
                     ]),
 
                     h("div.details", [
-                        (ref3 = this.status) === "inactive" || ref3 === "partial" ? h("a.add", {
-                            href: "#Add",
-                            title: "Download and seed",
-                            onclick: this.handleNeedClick
-                        }, "+ seed") : void 0, h("span.size", {
-                            classes: {
-                                downloading: this.status === "downloading",
-                                partial: this.status === "partial",
-                                seeding: this.status === "seeding"
-                            },
-                            style: style
-                        }, [this.status === "seeding" ? h("span", "seeding: ") : void 0, this.status === "downloading" || this.status === "partial" ? [h("span.downloaded", Text.formatSize(this.row.stats.bytes_downloaded)), " of "] : void 0, Text.formatSize(this.row.size)]), h("span.detail.added", {
+                         h("span.detail.added", {
                             title: Time.date(this.row.date_added, "long")
                         }, Time.since(this.row.date_added)), h("span.detail.uploader", [
-                            "by ", h("a.username", {
+                            "by ", h("a.link.username", {
 				href: "?Channel=" + this.row.cert_user_id,
                                 title: this.row.cert_user_id + ": " + this.row.directory
                             }, this.row.cert_user_id.split("@")[0])
@@ -2227,7 +2228,7 @@
         MenuAll.prototype.render = function() {
             return h("div.menu_left", [
                 h("ul.list-types-new", [
-                    h("li", "v0.1.12 ALPHA"),
+                    h("li", "v0.1.14 ALPHA"),
 
                     // Featured
                     h("li", [h("a.list-type", {
