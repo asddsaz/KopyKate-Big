@@ -1019,7 +1019,7 @@ textarea:focus {
 	color: #000000;
 	margin-top: -40px;
 	text-transform: uppercase;
-	background: #70FCD8;
+	background: #8BC34A;
 	font-size: 15px;
 	font-weight: lighter;
 	letter-spacing: 1px;
@@ -1043,7 +1043,7 @@ textarea:focus {
 	-o-transition: none;
 	-ms-transition: none;
 	transition: none;
-	background-color: #70FCD8
+	background-color: #8BC34A
 }
 .List .icon-upload {
 	width: 15px;
@@ -1167,7 +1167,7 @@ textarea:focus {
 	padding-top: 5px;
 	padding-left: 0px;
 	padding-bottom: 5px;
-	margin-left: 15px;
+	margin-left: 25px;
 	margin-top: 0px;
 	overflow: hidden
 }
@@ -1217,8 +1217,8 @@ textarea:focus {
 	transition: box-shadow 1s, background-color 1s
 }
 .List .file .size.downloading, .List .file .size.partial {
-	padding: 3px 5px;
-	width: 150px;
+	padding: 5px 0px 5px 0px;
+	width: 100%;
 	display: inline-block;
 	text-align: center;
 	background-color: #f1f1f1;
@@ -1240,8 +1240,7 @@ textarea:focus {
 }
 .List .file .add {
 	text-transform: uppercase;
-	margin-right: 5px;
-	color: #4c31ff;
+	color: black;
 	text-decoration: none;
 	border: 1px solid #d8d8d8;
 	padding: 2px 10px;
@@ -1337,7 +1336,7 @@ textarea:focus {
 }
 #droptext .title {
 	font-size: 48px;
-	background-color: #70FCD8;
+	background-color: #8BC34A;
 	padding: 15px 30px;
 	text-transform: uppercase;
 	display: inline-block;
