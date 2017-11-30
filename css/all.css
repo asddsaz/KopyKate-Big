@@ -603,6 +603,7 @@ body {
 	height: calc(100% - 100px);
 	position: absolute;
 	width: 100%;
+	overflow-x: hidden;
 	background: #fff;
 }
 .link {
@@ -1094,8 +1095,6 @@ textarea:focus {
 	text-transform: uppercase;
 }
 .List .file {
-	padding-bottom: 15px;
-	padding-top: 20px;
 	clear: both
 }
 .List .file:last-child {
@@ -1196,7 +1195,6 @@ textarea:focus {
 }
 .List .file .username {
 	text-transform: capitalize;
-	font-weight: bold
 }
 .List .file .details .detail:before {
 	content: "\2022";
@@ -1217,7 +1215,7 @@ textarea:focus {
 	transition: box-shadow 1s, background-color 1s
 }
 .List .file .size.downloading, .List .file .size.partial {
-	padding: 5px 0px 5px 0px;
+	height: 5px;
 	width: 100%;
 	display: inline-block;
 	text-align: center;
@@ -1225,19 +1223,27 @@ textarea:focus {
 	line-height: 13px;
 }
 .List .file .seeding {
-	text-transform: uppercase;
+
+	height: 5px;
+	width: 100%;
+	display: inline-block;
+	text-align: center;
+	background-color: #9ce04c;
+	line-height: 13px;
+
+/*	text-transform: uppercase;
 	margin-right: 5px;
 	font-weight: bold;
-	color: #4CAF50;
+	color: #4CAF50;*/
 }
-.List .file .seeding:before {
+/*.List .file .seeding:before {
 	content: "\25CF";
 	color: #4CAF50;
 	vertical-align: 1px;
 	line-height: 0px;
 	margin: 5px;
 	font-size: 12px;
-}
+}*/
 .List .file .add {
 	text-transform: uppercase;
 	color: black;
@@ -1268,7 +1274,7 @@ textarea:focus {
 	transition: none
 }
 .List .file .stats {
-	margin-top: 12.5px;
+	padding-top: 5px;
 	/*float: right;*/
 	text-align: right;
 	font-size: 14px;
