@@ -1667,6 +1667,121 @@
 
 }).call(this);
 
+/* ---- File Manager ---- */
+
+(function() {
+    var FileManager,
+        bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        },
+        extend = function(child, parent) {
+            for (var key in parent) {
+                if (hasProp.call(parent, key)) child[key] = parent[key];
+            }
+
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor();
+            child.__super__ = parent.prototype;
+            return child;
+        },
+        hasProp = {}.hasOwnProperty;
+
+    FileManager = (function(superClass) {
+        extend(FileManager, superClass);
+
+        function FileManager() {
+            this.render = bind(this.render, this);
+            this.loadComments = bind(this.loadComments, this);
+        }
+
+        FileManager.prototype.deleteCheckboxValues = function(form) {
+
+            var values = [];
+            var bigfiles = form.bigfile;
+            var iLen;
+
+            for (var i = 0, iLen = bigfiles.length; i < iLen; i++) {
+                if (bigfiles[i].checked) {
+                    values.push(bigfiles[i].value);
+                }
+            }
+            // Do something with values
+            for (var i = 0; i < values.length; ++i) {
+                big_file_value = values[i];
+
+                bigFileChecked = document.createElement("div");
+                bigFileChecked.setAttribute("class", "big_file_checked");
+                bigFileChecked.innerHTML = "<div>Deleted: [" + values[i] + "]</div>"
+                document.getElementById("checked_list").appendChild(bigFileChecked);
+
+                Page.cmd("optionalFileDelete", big_file_value);
+                Page.cmd("optionalFileDelete", big_file_value + ".piecemap.msgpack");
+            }
+
+            this.render();
+
+            return values;
+        }
+
+        FileManager.prototype.render = function() {
+
+
+            $main = document.getElementById('main');
+            $menuLeftContainer = document.getElementById('menu_left_container');
+            $listContainer = document.getElementById('list_container');
+            $fileManager = document.getElementById('FileManager');
+            $checkboxList = document.getElementById('checkbox_list');
+
+            document.querySelector("#checkbox_form").addEventListener("submit", function(e) {
+                Page.fileManager.deleteCheckboxValues(this);
+                e.preventDefault();
+            });
+
+            $checkboxList.innerHTML = "";
+
+            Page.cmd("optionalFileList", {
+                filter: "downloaded,bigfile",
+                limit: 1000
+            }, (res) => {
+                var i, len, row;
+                for (i = 0, len = res.length; i < len; i++) {
+                    file = res[i];
+                    absolute_file_name = file["inner_path"];
+                    file_name = file["inner_path"].replace(/.*\//, "");
+
+                    menu_state = 0;
+
+                    $main.width = "100%";
+                    $main.style.backgroundColor = "#f5f5f5";
+                    document.body.style.backgroundColor = "#f5f5f5";
+                    $main.style.marginLeft = "0px";
+                    $menuLeftContainer.style.display = "none";
+                    $listContainer.style.display = "none";
+                    $fileManager.style.display = "inline-block";
+
+                    bigFileRow = document.createElement("div");
+                    bigFileRow.setAttribute("class", "big_file_single");
+                    //divComment.setAttribute("id", big_file_id);
+                    bigFileRow.innerHTML = "<label class='checkbox_container'>" + file_name + "<input type='checkbox' name='bigfile' value='" + absolute_file_name + "'><span class='checkmark'></span></label>";
+                    $checkboxList.appendChild(bigFileRow);
+                };
+            });
+
+            return this;
+        };
+
+        return FileManager;
+
+    })(Class);
+
+    window.FileManager = FileManager;
+
+}).call(this);
 
 /* ---- Video player ---- */
 
@@ -1783,7 +1898,7 @@
                     comment_body = comment["body"];
                     comment_date_added = comment["date_added"];
                     comment_directory = comment["directory"];
-		    comment_user_id = comment["cert_user_id"];
+                    comment_user_id = comment["cert_user_id"];
                     comment_id = "comment_" + comment_date_added + "_" + comment_directory;
 
                     /*var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];*/
@@ -1807,7 +1922,7 @@
                     divComment = document.createElement("div");
                     divComment.setAttribute("class", "video_comment_single");
                     divComment.setAttribute("id", comment_id);
-                    divComment.innerHTML = "<div style='float: left'><img src='img/user.svg' style='float: left; opacity: 0.50; height: 50px'></img></div><div style='float: left; width: calc(100% - 60px); padding: 5px'><div style='color: #a0a0a0'>" + comment_user_id + "</div><div style='color: #a0a0a0'>" + comment_formatted_date + ": </div><div>" + comment_body + "</div>";
+                    divComment.innerHTML = "<div style='float: left'><div class='user_comment_icon'></div></div><div style='float: left; width: calc(100% - 60px); padding: 0px 0px 5px 10px'><div style='color: #a0a0a0'>" + comment_user_id + "</div><div style='color: #a0a0a0'>" + comment_formatted_date + ": </div><div>" + comment_body + "</div>";
                     $videoCommentBox.appendChild(divComment);
 
                 };
@@ -1846,6 +1961,7 @@
             this.handleImageSave = bind(this.handleImageSave, this);
             this.handleBriefSave = bind(this.handleBriefSave, this);
             this.handleDelete = bind(this.handleDelete, this);
+            this.handleUnseed = bind(this.handleUnseed, this);
             this.deleteFromDataJson = bind(this.deleteFromDataJson, this);
             this.deleteFromContentJson = bind(this.deleteFromContentJson, this);
             this.deleteFile = bind(this.deleteFile, this);
@@ -1953,6 +2069,18 @@
                 };
             })(this));
         };
+
+        File.prototype.handleUnseed = function() {
+            Page.cmd("wrapperConfirm", ["Stop seeding this file?", "OK"], (function(_this) {
+                return function() {
+                    return _this.deleteFile(function(res) {
+                        return _this;
+                    });
+                };
+            })(this));
+            return false;
+        };
+
 
         File.prototype.handleTitleSave = function(title, cb) {
             return Page.cmd("fileGet", this.row.data_inner_path, (function(_this) {
@@ -2090,73 +2218,66 @@
                         style: ""
                     }, [h("div.video_empty", {
                         style: 'background-image: url("' + this.row.image_link + '")'
-                    })]),
-(ref3 = this.status) === "inactive" || ref3 === "partial" ? h("a.add", {
-                            href: "#Add",
-                            title: "Download and seed",
-                            onclick: this.handleNeedClick
-                        }, "+ seed") : void 0, h("span.size", {
-                            classes: {
-                                downloading: this.status === "downloading",
-                                partial: this.status === "partial",
-                                seeding: this.status === "seeding"
-                            },
-                            style: style
-                        }, [this.status === "seeding" ? h("span", "seeding: ") : void 0, this.status === "downloading" || this.status === "partial" ? [h("span.downloaded", Text.formatSize(this.row.stats.bytes_downloaded)), " of "] : void 0, Text.formatSize(this.row.size)])
+                    })]), h("span.size", {
+                        classes: {
+                            downloading: this.status === "downloading",
+                            partial: this.status === "partial",
+                            seeding: this.status === "seeding"
+                        },
+                        style: style
+                    }, [this.status === "seeding" || this.status === "downloading" || this.status === "partial" ? [h("span.downloaded" /*, Text.formatSize(this.row.stats.bytes_downloaded)*/ ) /*, " of "*/ ] : void 0 /*, Text.formatSize(this.row.size)*/ ])
                 ]),
 
                 h("div.left-info", [h("div.linkJoiner", [h("div.linkSeparator", {
                             style: ""
                         }, [
-                            h("a.title.link", {
+                            ((ref1 = this.editable_title) != null ? ref1.editing : void 0) ? this.editable_title.render(this.row.title) : h("a.title.link", {
                                 href: "?Video=" + this.row.date_added + "_" + this.row.directory,
-                                /*onclick: Page.handleLinkClick,*/
-                                style: "overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                            }, this.row.title)
-                        ]),
-
-                        h("div.linkSeparator", [
-                            ((ref1 = this.editable_title) != null ? ref1.editing : void 0) ? this.editable_title.render(this.row.title) : h("a.title.link.titly", {
-                                href: "#", // The link is interfering with the edit button!
-                                /*onclick: this.handleVideoClick,*/
-                                style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden",
                                 enterAnimation: Animation.slideDown
-                            }, ((ref2 = this.editable_title) != null ? ref2.render(":: Title") : void 0) || this.row.title)
-                        ]),
+                            }, ((ref2 = this.editable_title) != null ? ref2.render(this.row.title) : void 0) || this.row.title)
 
-                        h("div.linkSeparator", [
-                            ((ref1 = this.editable_image) != null ? ref1.editing : void 0) ? this.editable_image.render(this.row.image_link) : h("a.title.link.imgy", {
-                                href: "#", // The link is interfering with the edit button!
-                                /*onclick: this.handleVideoClick,*/
-                                style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden",
-                                enterAnimation: Animation.slideDown
-                            }, ((ref2 = this.editable_image) != null ? ref2.render(":: Thumbnail") : void 0) || this.row.image_link)
-                        ]),
 
-                        h("div.linkSeparator", [
-                            ((ref1 = this.editable_brief) != null ? ref1.editing : void 0) ? this.editable_brief.render(this.row.description) : h("a.title.link.briefy", {
-                                href: "#", // The link is interfering with the edit button!
-                                /*onclick: this.handleVideoClick,*/
-                                style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden;",
-                                enterAnimation: Animation.slideDown
-                            }, ((ref2 = this.editable_brief) != null ? ref2.render(":: Description") : void 0) || this.row.description)
                         ])
 
                     ]),
 
-                    h("div.details", [
-                         h("span.detail.added", {
-                            title: Time.date(this.row.date_added, "long")
-                        }, Time.since(this.row.date_added)), h("span.detail.uploader", [
-                            "by ", h("a.link.username", {
-				href: "?Channel=" + this.row.cert_user_id,
-                                title: this.row.cert_user_id + ": " + this.row.directory
-                            }, this.row.cert_user_id.split("@")[0])
-                        ]), this.status === "seeding" ? h("a.detail.fileinfo", h("a.link.filename", {
-                            href: "#Open+directory",
-                            title: "Open directory",
-                            onclick: this.handleOpenClick
-                        }, this.row.file_name)) : h("a.detail.filename", this.row.file_name)
+                    h("div.details", [h("div.linkSeparator", [
+                            h("span.detail.uploader", [
+                                h("a.link.username", {
+                                    href: "?Channel=" + this.row.cert_user_id,
+                                    title: this.row.cert_user_id + ": " + this.row.directory
+                                }, this.row.cert_user_id.split("@")[0]),
+                                h("span.detail.added", {
+                                    title: Time.date(this.row.date_added, "long")
+                                }, Time.since(this.row.date_added))
+                            ])
+                        ]), h("div.linkSeparator", [(ref3 = this.status) === "inactive" || ref3 === "partial" ? h("a.add", {
+                                href: "#Add",
+                                title: "Download and seed",
+                                onclick: this.handleNeedClick
+                            }, "+ seed") : void 0,
+
+                            (ref3 = this.status) === "seeding" || ref3 === "downloading" ? h("a.add.remove", {
+                                href: "#Remove",
+                                title: "Delete and remove file",
+                                onclick: this.handleUnseed
+                            }, "- stop") : void 0,
+                            h("span.detail.size-counter", [this.status === "downloading" || this.status === "partial" ? [Text.formatSize(this.row.stats.bytes_downloaded) + " / "] : void 0, Text.formatSize(this.row.size)])
+                        ]),
+                        h("div.linkSeparator", [
+                            ((ref1 = this.editable_image) != null ? ref1.editing : void 0) ? this.editable_image.render(this.row.image_link) : h("a.title.link.imgy", {
+                                href: "#",
+                                style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden",
+                                enterAnimation: Animation.slideDown
+                            }, ((ref2 = this.editable_image) != null ? ref2.render(":: Edit Thumbnail") : void 0) || this.row.image_link)
+                        ]),
+                        h("div.linkSeparator", [
+                            ((ref1 = this.editable_brief) != null ? ref1.editing : void 0) ? this.editable_brief.render(this.row.description) : h("a.title.link.briefy", {
+                                href: "#",
+                                style: "margin-left: 15px; font-size: 10px; color: #a0a0a0; overflow: hidden;",
+                                enterAnimation: Animation.slideDown
+                            }, ((ref2 = this.editable_brief) != null ? ref2.render(":: Edit Description") : void 0) || this.row.description)
+                        ])
                     ])
                 ]));
 
@@ -2204,8 +2325,8 @@
         }
 
         MenuAll.prototype.getUserId = function() {
-	    Page.setUrl("?Channel=" + Page.site_info.cert_user_id);
-	    document.getElementById('debugger1').innerHTML = Page.site_info.cert_user_id;
+            Page.setUrl("?Channel=" + Page.site_info.cert_user_id);
+            document.getElementById('debugger1').innerHTML = Page.site_info.cert_user_id;
             Page.list.openVideoChannel();
             return this;
         };
@@ -2228,7 +2349,9 @@
         MenuAll.prototype.render = function() {
             return h("div.menu_left", [
                 h("ul.list-types-new", [
-                    h("li", "v0.1.14 ALPHA"),
+                    h("li", {
+                        style: "font-weight: bold; color: #888"
+                    }, "v0.1.19 ALPHA"),
 
                     // Featured
                     h("li", [h("a.list-type", {
@@ -2261,7 +2384,30 @@
                     h("li", [h("a.list-type", {
                         href: "javascript:void(0)",
                         onclick: Page.menuAll.getUserId,
-                    }, "My Channel")])
+                    }, "My Channel")]),
+
+                    // My Channel
+                    h("li", [h("a.list-type", {
+                        href: "?Manager",
+                        classes: {
+                            active: this.type === "Manager"
+                        }
+                    }, "File Manager")]),
+
+                    h("li", {
+                        style: "font-weight: bold; color: #888"
+                    }, "RELATED SITES"),
+
+                    // My Channel
+                    h("li", [h("a.list-type", {
+                        href: "../1uPLoaDwKzP6MCGoVzw48r4pxawRBdmQc/",
+                    }, "ZeroUp")]),
+                    h("li", [h("a.list-type", {
+                        href: "../1FUQPLXHimgCvYHH7v3bJXspJ7bMBUXcEb/",
+                    }, "ZeroTube")]),
+                    h("li", [h("a.list-type", {
+                        href: "https://github.com/kopy-kate/kopy-kate-big",
+                    }, "Source Code")])
                 ])
             ]);
         };
@@ -2389,8 +2535,9 @@
                             file.stats = stats[file.inner_path];
                             file_date_added = file["date_added"];
                             file_directory = file["directory"];
+                            file_size = file["size"];
                             video_string = file_date_added + "_" + file_directory;
-							
+
                             if (file.stats == null) {
                                 file.stats = {};
                             }
@@ -2408,12 +2555,12 @@
                             // If one of the files is a sticky Uri, then add 1000000 peers to it.. keep it top!
                             if (order_mode === "featured") {
                                 if (topic_sticky_uris.indexOf(video_string) >= 0) {
-									/*document.getElementById('debugger3').innerHTML = video_string;*/
+                                    /*document.getElementById('debugger3').innerHTML = video_string;*/
                                     file.stats["peer_seed"] = file.stats["peer_seed"] + 1000000;
-									/*document.getElementById('debugger3').innerHTML = file.stats["peer_seed"];*/
+                                    /*document.getElementById('debugger3').innerHTML = file.stats["peer_seed"];*/
                                     file["is_featured"] = 1;
                                 }
-                            }
+                            } //else if (order_mode === "")
 
                         }
 
@@ -2637,7 +2784,7 @@
             return this.checkContentJson(function(_this) {
                 return function(res) {
                     return _this.registerComment(file_uri, comment_body, Time.timestamp(), function(res) {
-			Page.videoPlayer.loadComments(file_date_added, file_directory);
+                        Page.videoPlayer.loadComments(file_date_added, file_directory);
                         return Page.cmd("siteSign", {
                             inner_path: "data/users/" + Page.site_info.auth_address + "/content.json"
                         }, function(res) {
@@ -2657,7 +2804,7 @@
                 Page.cmd("wrapperNotification", ["info", "Maximum file size on this site during the testing period: 2GB"]);
                 return false;
             }
-            if (file.size < 10 * 1024 * 1024) {
+            if (file.size < 1 * 1024 * 1024) {
                 Page.cmd("wrapperNotification", ["info", "Minimum file size: 10MB"]);
                 return false;
             }
@@ -2969,6 +3116,7 @@
             this.projector = maquette.createProjector();
             this.list = new List();
             this.videoPlayer = new VideoPlayer();
+            this.fileManager = new FileManager();
             this.menuAll = new MenuAll();
             this.selector = new Selector();
             this.uploader = new Uploader();
@@ -2979,11 +3127,13 @@
                 this.history_state["url"] = url;
 
                 if (base.href.indexOf("Video") > -1) {
-		    this.videoRoute();
+                    this.videoRoute();
                 } else if (base.href.indexOf("Channel") > -1) {
-		    this.channelRoute();
-		} else {
-		    this.route(url);
+                    this.channelRoute();
+                } else if (base.href.indexOf("Manager") > -1) {
+                    this.fileRoute();
+                } else {
+                    this.route(url);
                 };
             }
             this.projector.replace($("#List"), this.list.render);
@@ -3004,11 +3154,17 @@
             return this;
         };
 
-	ZeroUp.prototype.channelRoute = function() {
-	    var href_channel = base.href.split('=')[1];	
-	    document.getElementById('debugger1').innerHTML = href_channel;
-	    Page.list.openVideoChannel();
-	};
+        ZeroUp.prototype.channelRoute = function() {
+            var href_channel = base.href.split('=')[1];
+            document.getElementById('debugger1').innerHTML = href_channel;
+            Page.list.openVideoChannel();
+        };
+
+        ZeroUp.prototype.fileRoute = function() {
+            this.fileManager.render();
+            Page.list.type = "Manager";
+            Page.menuAll.type = "Manager";
+        };
 
         ZeroUp.prototype.setPage = function(page_name) {
             this.state.page = page_name;
