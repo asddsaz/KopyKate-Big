@@ -1,60 +1,83 @@
-
 <!DOCTYPE html>
 
 <html>
+
 <head>
- <title>KopyKate BIG</title>
- <meta charset="utf-8" />
- <link rel="stylesheet" href="css/all.css?=version=2.2" />
- <link rel="stylesheet" href="css/new.css?=version=3.4" />
- <link rel="stylesheet" href="css/fonts_icons.css?=version=1.0" />
- <base href="" target="_top" id="base">
- <script>base.href = document.location.href.replace("/media", "").replace("index.html", "").replace(/[&?]wrapper=False/, "").replace(/[&?]wrapper_nonce=[A-Za-z0-9]+/, "")</script>
+    <title>KopyKate BIG</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/all.css?=version=2.41" />
+    <link rel="stylesheet" href="css/new.css?=version=3.651" />
+    <link rel="stylesheet" href="css/fonts_icons.css?=version=1.0" />
+    <base href="" target="_top" id="base">
+    <script>
+        base.href = document.location.href.replace("/media", "").replace("index.html", "").replace(/[&?]wrapper=False/, "").replace(/[&?]wrapper_nonce=[A-Za-z0-9]+/, "")
+    </script>
 </head>
 
 <body>
 
-<div class="menu_top">
-<a href="javascript:void(0);" onclick="showhide()"><img class="main_menu" src="img/menu.svg"></img></a>
+    <div class="menu_top">
+        <a href="javascript:void(0);" onclick="showhide()">
+            <div class="main_menu"></div>
+        </a>
 
-<div id="logo-pc" class="main_logo"><a href="."><img src="img/logo-svg.svg" height="35.625px"></img></a></div>
-<div id="logo-mobile" class="main_logo"><a href="."><img src="img/CAT.svg" height="35.625px"></img></a></div>
+        <a href=".">
+            <div id="logo-pc" class="main_logo logo-svg"></div>
+        </a>
+        <a href=".">
+            <div id="logo-mobile" class="main_logo cat"></div>
+        </a>
 
-<!--<a href="."><img class="main_logo" src="img/logo.png"></img></a>-->
+        <!--<a href="."><img class="main_logo" src="img/logo.png"></img></a>-->
 
-<div id="main_upload_placeholder" class="main_upload_placeholder"></div>
+        <div id="main_upload_placeholder" class="main_upload_placeholder"></div>
 
-<div class="search_wrap">
-   <div class="search">
-      <input type="text" id="searchTerm" class="searchTerm" placeholder="What are you looking for?">
-      <button type="submit" id="searchButton" class="searchButton">
-	<img src="img/search.svg" height="15px"></img>
+        <div class="search_wrap">
+            <div class="search">
+                <input type="text" id="searchTerm" class="searchTerm" placeholder="What are you looking for?">
+                <button type="submit" id="searchButton" class="searchButton">
+	<div class="search_icon"></div>
      </button>
-   </div>
-</div>
+            </div>
+        </div>
 
-</div>
+    </div>
 
-<div id="menu_left_container">
-<div id="menu_left" class="menu_left"></div>
-</div>
+    <div id="menu_left_container">
+        <div id="menu_left" class="menu_left"></div>
+    </div>
 
-<div id="main" class="main">
-<div id="debugger1" style="display: none">DEBUGGER!</div>
-<!--<div id="debugger2">DEBUGGER!</div>
+    <div id="main" class="main">
+        <div id="debugger1" style="display: none">DEBUGGER!</div>
+        <!--<div id="debugger2">DEBUGGER!</div>
 <div id="debugger3">DEBUGGER!</div>-->
-<div id="droptext"><span class="title">Drop here to upload</span></div>
-<div id="VideoPlayer" class="VideoPlayer"></div>
+        <div id="droptext"><span class="title">Drop here to upload</span></div>
+        <div id="VideoPlayer" class="VideoPlayer"></div>
 
-<div id="list_container">
-<div id="List" class="List"></div>
-</div>
+        <div id="FileManager" class="FileManager" style="display: none">
 
-<div id="Selector" class="Selector"></div>
-<div id="Uploader" class="Uploader"></div>
+            <form id="checkbox_form">
+                <div id="checkbox_buttons">
+                    <label class="fileButton" for="deselect">Deselect</label>
+                    <label class="fileButton" for="delete">Delete</label>
+                    <input type="reset" id="deselect" value="Deselect" style="display: none">
+                    <input type="submit" id="delete" value="Delete" style="display: none">
+                </div>
+                <div id="checked_list" style="background-color: #FFF"></div>
+                <div id="checkbox_list"></div>
+            </form>
 
-<div id="Bg" class="Bg">
- <!-- <div class="bgitem icon icon-video"></div>
+        </div>
+
+        <div id="list_container">
+            <div id="List" class="List"></div>
+        </div>
+
+        <div id="Selector" class="Selector"></div>
+        <div id="Uploader" class="Uploader"></div>
+
+        <div id="Bg" class="Bg">
+            <!-- <div class="bgitem icon icon-video"></div>
  <div class="bgitem icon icon-gamepad"></div>
  <div class="bgitem icon icon-ipod"></div>
  <div class="bgitem icon icon-image"></div>
@@ -64,65 +87,64 @@
  <div class="bgitem icon icon-gamepad"></div>
  <div class="bgitem icon icon-ipod"></div>
  <div class="bgitem icon icon-file"></div>-->
-</div>
-</div>
+        </div>
+    </div>
 
-<script type="text/javascript" src="js/anime.js?=version=1.0" charset="UTF-8"></script>
-<script type="text/javascript" src="js/maquette.min.js" charset="UTF-8"></script>
-<script type="text/javascript" src="js/all-alt.js?=version=2.3" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/anime.js?=version=1.0" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/maquette.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/all-alt.js?=version=2.84" charset="UTF-8"></script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
+        $menu_left = document.getElementById('menu_left_container');
+        $main = document.getElementById('main');
+        var menu_state = 1;
 
-  $menu_left = document.getElementById('menu_left_container');
-  $main = document.getElementById('main');
-  var menu_state = 1;
-
-  window.onload = function() {
-    if (window.innerWidth <= 1280) {
-      $menu_left.style.display = 'none';
-    } else {
-      if (menu_state == 1) {
-      $menu_left.style.display = 'block';
-      }
-    }
-  };
+        window.onload = function() {
+            if (window.innerWidth <= 1280) {
+                $menu_left.style.display = 'none';
+            } else {
+                if (menu_state == 1) {
+                    $menu_left.style.display = 'block';
+                }
+            }
+        };
 
 
-  window.onresize = function() {
-    if (window.innerWidth <= 1280) {
-      $menu_left.style.display = 'none';
-    } else {
-      if (menu_state == 1) {
-        $menu_left.style.display = 'block';
-        $main.style.width = 'calc(100% - 250px)';
-        $main.style.marginLeft = '250px';
-      }
-    }
-  };
+        window.onresize = function() {
+            if (window.innerWidth <= 1280) {
+                $menu_left.style.display = 'none';
+            } else {
+                if (menu_state == 1) {
+                    $menu_left.style.display = 'block';
+                    $main.style.width = 'calc(100% - 250px)';
+                    $main.style.marginLeft = '250px';
+                }
+            }
+        };
 
-    function showhide() {
+        function showhide() {
 
-      if ($menu_left.style.display === 'none') {
-          $menu_left.style.display = 'block';
-	  $menu_left.style.zIndex = '49';
- 	  if (menu_state == 1) {
-	    if (window.innerWidth >= 1280) {
-      	      $main.style.width = 'calc(100% - 250px)';
-	      $main.style.marginLeft = '250px';
-	    }
-      	  }
-      } else {
-          $menu_left.style.display = 'none';
-	  if (menu_state == 1) {
-	    if (window.innerWidth >= 1280) {
-      	      $main.style.width = '100%';
-	      $main.style.marginLeft = '0px';
-	    }
-      	  }
-      }
-    };
-
-</script>
+            if ($menu_left.style.display === 'none') {
+                $menu_left.style.display = 'block';
+                $menu_left.style.zIndex = '49';
+                if (menu_state == 1) {
+                    if (window.innerWidth >= 1280) {
+                        $main.style.width = 'calc(100% - 250px)';
+                        $main.style.marginLeft = '250px';
+                    }
+                }
+            } else {
+                $menu_left.style.display = 'none';
+                if (menu_state == 1) {
+                    if (window.innerWidth >= 1280) {
+                        $main.style.width = '100%';
+                        $main.style.marginLeft = '0px';
+                    }
+                }
+            }
+        };
+    </script>
 
 </body>
+
 </html>
