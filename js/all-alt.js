@@ -1730,6 +1730,10 @@
 
         FileManager.prototype.render = function() {
 
+            search_field = document.getElementById('searchTerm').value;
+            search_field_no_space = search_field.replace(/\s/g, '%');
+	    
+	    search_query = 'WHERE file.title LIKE "%' + search_field_no_space + '%"';
 
             $main = document.getElementById('main');
             $menuLeftContainer = document.getElementById('menu_left_container');
@@ -1742,18 +1746,25 @@
                 e.preventDefault();
             });
 
-            $checkboxList.innerHTML = "";
+            // Listen to search box
+            document.getElementById('searchButton').addEventListener('click', function(evt) {
+                Page.fileManager.render();
+                evt.preventDefault();
+            });
 
-            Page.cmd("optionalFileList", {
-                filter: "downloaded,bigfile",
-                limit: 1000
-            }, (res) => {
-                var i, len, row;
-                for (i = 0, len = res.length; i < len; i++) {
-                    file = res[i];
-                    absolute_file_name = file["inner_path"];
-                    file_name = file["inner_path"].replace(/.*\//, "");
+            document.getElementById('searchTerm').addEventListener('keypress', function(evt) {
+                if (evt.which == 13) {
+                    Page.fileManager.render();
+                }
+            });
 
+            query = "SELECT * FROM file LEFT JOIN json USING (json_id) " + search_query + " ORDER BY date_added DESC";
+
+            Page.cmd("dbQuery", [query], (res2) => {
+                Page.cmd("optionalFileList", {
+                    filter: "downloaded,bigfile",
+                    limit: 1000
+                }, (res) => {
                     menu_state = 0;
 
                     $main.width = "100%";
@@ -1764,12 +1775,35 @@
                     $listContainer.style.display = "none";
                     $fileManager.style.display = "inline-block";
 
-                    bigFileRow = document.createElement("div");
-                    bigFileRow.setAttribute("class", "big_file_single");
-                    //divComment.setAttribute("id", big_file_id);
-                    bigFileRow.innerHTML = "<label class='checkbox_container'>" + file_name + "<input type='checkbox' name='bigfile' value='" + absolute_file_name + "'><span class='checkmark'></span></label>";
-                    $checkboxList.appendChild(bigFileRow);
-                };
+                    $checkboxList.innerHTML = "";
+
+                    var i, j, len, ren, row, bow, video, video_file, video_title, file, file_path, file_name;
+
+                    for (j = 0, ren = res2.length; j < ren; j++) {
+                        video = res2[j];
+                        video_file = video["file_name"];
+                        video_title = video["title"];
+			video_date_added = video["date_added"];
+			video_directory = video["directory"];
+
+                        for (i = 0, len = res.length; i < len; i++) {
+                            file = res[i];
+                            file_path = file["inner_path"];
+                            file_name = file["inner_path"].replace(/.*\//, "");
+
+                            if (file_name == video_file) {
+				href_video = "?Video=" + video_date_added + "_" + video_directory;
+
+                                bigFileRow = document.createElement("div");
+                                bigFileRow.setAttribute("class", "big_file_single");
+                                //divComment.setAttribute("id", big_file_id);
+                                bigFileRow.innerHTML = "<label class='checkbox_container'><input type='checkbox' name='bigfile' value='" + file_path + "'><span class='checkmark'></span></label><a class='link filebrowse' href='" + href_video + "'>" + video_title + "</a>";
+                                $checkboxList.appendChild(bigFileRow);
+                            }
+                        };
+
+                    };
+                });
             });
 
             return this;
@@ -2351,7 +2385,7 @@
                 h("ul.list-types-new", [
                     h("li", {
                         style: "font-weight: bold; color: #888"
-                    }, "v0.1.19 ALPHA"),
+                    }, "v0.1.20 ALPHA"),
 
                     // Featured
                     h("li", [h("a.list-type", {
@@ -2392,7 +2426,7 @@
                         classes: {
                             active: this.type === "Manager"
                         }
-                    }, "File Manager")]),
+                    }, "Seedbox Manager")]),
 
                     h("li", {
                         style: "font-weight: bold; color: #888"
@@ -2502,6 +2536,7 @@
             // List of subqueries
             search_field = document.getElementById('searchTerm').value;
             search_field_no_space = search_field.replace(/\s/g, '%');
+	    //search_query = 'WHERE file.title LIKE "%' + search_field_no_space + '%"';
 
             if (this.channelMode == true) {
                 search_query = 'WHERE cert_user_id="' + certUserId + '" AND file.title LIKE "%' + search_field_no_space + '%"';
