@@ -108,6 +108,13 @@
 }
 /* New CSS */
 
+#checkbox_buttons {
+    padding: 5px;
+}
+.filebrowse {
+    margin-top: -5px;
+    margin-left: 40px;
+}
 .FileManager {
     min-width: 200px !important;
     width: 100% !important;
@@ -363,7 +370,8 @@
     display: block;
     position: relative;
     padding-left: 35px;
-    margin-bottom: 12px;
+    /*margin-bottom: 12px;*/
+    
     cursor: pointer;
     font-size: 22px;
     -webkit-user-select: none;
