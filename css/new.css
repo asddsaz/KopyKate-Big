@@ -108,6 +108,10 @@
 }
 /* New CSS */
 
+#edit_textarea {
+    max-height: 250px;
+}
+
 #checkbox_buttons {
     padding: 5px;
 }
@@ -288,11 +292,11 @@
 .list-types-new li:nth-child(1) {
     list-style-type: none;
     background-image: none;
-    padding: 10px 0 10px 0;
+    padding: 7.5px 0 7.5px 0;
 }
 .list-types-new li {
     margin-left: -12.5px;
-    padding: 10px 0 10px 0;
+    padding: 7.5px 0 7.5px 0;
     list-style: none;
 }
 .list-types-new {
