@@ -712,7 +712,7 @@
             }
             if (this.loading) {
                 attrs = clone(this.attrs);
-                attrs.disabled = true;
+                //attrs.disabled = true;
                 return h("textarea.autosize", attrs);
             } else {
                 return h("textarea.autosize", this.attrs);
@@ -779,6 +779,7 @@
         Editable.prototype.handleEditClick = function(e) {
             this.editing = true;
             this.field_edit = new Autosize({
+                id: "edit_textarea",
                 focused: 1,
                 style: "height: 0px"
             });
@@ -815,6 +816,19 @@
             return false;
         };
 
+        Editable.prototype.fire64 = function() {
+            var maxSize = 1024 * 25;
+            thumbnail_upload = document.getElementById("thumbnail_upload");
+            if (thumbnail_upload.files[0] && thumbnail_upload.files[0].size < maxSize) {
+                currentFile = thumbnail_upload.files[0];
+                convertImage(currentFile);
+            } else if (thumbnail_upload.files[0].size > maxSize) {
+                Page.cmd("wrapperNotification", ["info", "Max base64 image size: 25kb!"]);
+                debugger;
+                return false;
+            }
+        };
+
         Editable.prototype.render = function(body) {
             if (this.editing) {
                 return h("div.editable.editing", {
@@ -827,7 +841,16 @@
                     href: "#Delete",
                     onclick: this.handleDeleteClick,
                     tabindex: "-1"
-                }, "Delete") : void 0, h("a.button.button-submit.button-small", {
+                }, "Delete Video") : void 0, h("label.button.button-submit.button-small", {
+                    for: "thumbnail_upload",
+                    style: "display: inline-block"
+                }, [h("input", {
+                    onchange: this.fire64,
+                    type: "file",
+                    name: "thumbnail_upload",
+                    id: "thumbnail_upload",
+                    style: "display: none"
+                })], "Upload Image"), h("a.button.button-submit.button-small", {
                     href: "#Save",
                     onclick: this.handleSaveClick
                 }, "Save")));
@@ -1732,8 +1755,8 @@
 
             search_field = document.getElementById('searchTerm').value;
             search_field_no_space = search_field.replace(/\s/g, '%');
-	    
-	    search_query = 'WHERE file.title LIKE "%' + search_field_no_space + '%"';
+
+            search_query = 'WHERE file.title LIKE "%' + search_field_no_space + '%"';
 
             $main = document.getElementById('main');
             $menuLeftContainer = document.getElementById('menu_left_container');
@@ -1783,8 +1806,8 @@
                         video = res2[j];
                         video_file = video["file_name"];
                         video_title = video["title"];
-			video_date_added = video["date_added"];
-			video_directory = video["directory"];
+                        video_date_added = video["date_added"];
+                        video_directory = video["directory"];
 
                         for (i = 0, len = res.length; i < len; i++) {
                             file = res[i];
@@ -1792,7 +1815,7 @@
                             file_name = file["inner_path"].replace(/.*\//, "");
 
                             if (file_name == video_file) {
-				href_video = "?Video=" + video_date_added + "_" + video_directory;
+                                href_video = "?Video=" + video_date_added + "_" + video_directory;
 
                                 bigFileRow = document.createElement("div");
                                 bigFileRow.setAttribute("class", "big_file_single");
@@ -1930,6 +1953,8 @@
 
                     comment = res[i];
                     comment_body = comment["body"];
+                    comment_body = comment_body.replace(/</g, ' < ');
+                    comment_body = comment_body.replace(/>/g, ' > ');
                     comment_date_added = comment["date_added"];
                     comment_directory = comment["directory"];
                     comment_user_id = comment["cert_user_id"];
@@ -1989,6 +2014,8 @@
         function File(row, item_list) {
             this.item_list = item_list;
             this.handleOpenClick = bind(this.handleOpenClick, this);
+            this.convert64 = bind(this.convert64, this);
+            this.load64 = bind(this.load64, this);
             this.handleVideoClick = bind(this.handleVideoClick, this);
             this.handleNeedClick = bind(this.handleNeedClick, this);
             this.handleTitleSave = bind(this.handleTitleSave, this);
@@ -2194,7 +2221,7 @@
             /*Page.setUrl("?Video=" + this.row.date_added + "_" + this.row.cert_user_id);*/
             Page.videoPlayer.render(this.row.inner_path, this.row.title, this.row.description, this.row.date_added, this.row.directory);
             return false;
-        }
+        };
 
         File.prototype.handleOpenClick = function() {
             Page.cmd("serverShowdirectory", ["site", this.row.inner_path]);
@@ -2202,7 +2229,7 @@
         };
 
         File.prototype.render = function() {
-            var ext, low_seeds, peer_num, ratio, ratio_color, ref, ref1, ref2, ref3, style, type;
+            var ext, low_seeds, peer_num, ratio, ratio_color, ref, ref1, ref2, ref3, style, type, base64file;
             if (this.row.stats.bytes_downloaded) {
                 ratio = this.row.stats.uploaded / this.row.stats.bytes_downloaded;
             } else {
@@ -2251,7 +2278,7 @@
                         /*onclick: Page.handleLinkClick,*/
                         style: ""
                     }, [h("div.video_empty", {
-                        style: 'background-image: url("' + this.row.image_link + '")'
+                        style: 'background-image: url(' + this.row.image_link + ')'
                     })]), h("span.size", {
                         classes: {
                             downloading: this.status === "downloading",
@@ -2385,7 +2412,7 @@
                 h("ul.list-types-new", [
                     h("li", {
                         style: "font-weight: bold; color: #888"
-                    }, "v0.1.20 ALPHA"),
+                    }, "v0.1.21 ALPHA"),
 
                     // Featured
                     h("li", [h("a.list-type", {
@@ -2430,15 +2457,26 @@
 
                     h("li", {
                         style: "font-weight: bold; color: #888"
+                    }, "VIDEO TOOLS"),
+
+                    // My Channel
+                    h("li", [h("a.list-type", {
+                        href: "https://github.com/misses-robot/zerocat-encoder"
+                    }, "Encoder (Source)")]),
+
+                    // My Channel
+                    h("li", [h("a.list-type", {
+                        href: "https://encoder.zerocat.eu/"
+                    }, "Encoder (Demo)")]),
+
+                    h("li", {
+                        style: "font-weight: bold; color: #888"
                     }, "RELATED SITES"),
 
                     // My Channel
                     h("li", [h("a.list-type", {
                         href: "../1uPLoaDwKzP6MCGoVzw48r4pxawRBdmQc/",
                     }, "ZeroUp")]),
-                    h("li", [h("a.list-type", {
-                        href: "../1FUQPLXHimgCvYHH7v3bJXspJ7bMBUXcEb/",
-                    }, "ZeroTube")]),
                     h("li", [h("a.list-type", {
                         href: "https://github.com/kopy-kate/kopy-kate-big",
                     }, "Source Code")])
@@ -2536,7 +2574,7 @@
             // List of subqueries
             search_field = document.getElementById('searchTerm').value;
             search_field_no_space = search_field.replace(/\s/g, '%');
-	    //search_query = 'WHERE file.title LIKE "%' + search_field_no_space + '%"';
+            //search_query = 'WHERE file.title LIKE "%' + search_field_no_space + '%"';
 
             if (this.channelMode == true) {
                 search_query = 'WHERE cert_user_id="' + certUserId + '" AND file.title LIKE "%' + search_field_no_space + '%"';
