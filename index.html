@@ -1,151 +1,59 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-    <title>KopyKate BIG</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="css/all.css?=version=2.5" />
-    <link rel="stylesheet" href="css/new.css?=version=3.72" />
-    <link rel="stylesheet" href="css/fonts_icons.css?=version=1.0" />
-    <base href="" target="_top" id="base">
-    <script>
-        base.href = document.location.href.replace("/media", "").replace("index.html", "").replace(/[&?]wrapper=False/, "").replace(/[&?]wrapper_nonce=[A-Za-z0-9]+/, "")
-    </script>
+<title>
+KOPYKATE BIG - OFFICIAL
+</title>
+<meta charset="utf-8"/>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="zeronet,kopykate,video,streaming,movies,shows,music,tutorials,everything">
+<base href="" target="_top" id="base">
+<link rel="stylesheet" href="css/all.css?v=5.02" />
+<link rel="stylesheet" href="css/fonts.css" />
+<script>
+base.href=document.location.href.replace("/media","").replace("index.html","").replace(/[&?]wrapper=False/,"").replace(/[&?]wrapper_nonce=[A-Za-z0-9]+/,"");
+</script>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
 </head>
-
 <body>
+<div id="search" class="search"></div>
+<div id="header" class="header"></div>
+<div id="main" class="main"></div>
+<div id="nav" class="nav"></div>
+<script>
+function dosearch() {
+    if ($("#search").hasClass("search")) {
+      if (window.innerWidth <= 640) {
+          $('#search').hide()
+      } else {
+          $('#search').show()
+      }
+    }
+}
 
-    <div class="menu_top">
-        <a href="javascript:void(0);" onclick="showhide()">
-            <div class="main_menu"></div>
-        </a>
-
-        <a href=".">
-            <div id="logo-pc" class="main_logo logo-svg"></div>
-        </a>
-        <a href=".">
-            <div id="logo-mobile" class="main_logo cat"></div>
-        </a>
-
-        <!--<a href="."><img class="main_logo" src="img/logo.png"></img></a>-->
-
-        <div id="main_upload_placeholder" class="main_upload_placeholder"></div>
-
-        <div class="search_wrap">
-            <div class="search">
-                <input type="text" id="searchTerm" class="searchTerm" placeholder="What are you looking for?">
-                <button type="submit" id="searchButton" class="searchButton">
-	<div class="search_icon"></div>
-     </button>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="menu_left_container">
-        <div id="menu_left" class="menu_left"></div>
-    </div>
-
-    <div id="main" class="main">
-        <div id="debugger1" style="display: none">DEBUGGER!</div>
-        <!--<div id="debugger2">DEBUGGER!</div>
-	<div id="debugger3">DEBUGGER!</div>-->
-        <div id="droptext"><span class="title">Drop here to upload</span></div>
-        <div id="VideoPlayer" class="VideoPlayer"></div>
-
-        <div id="FileManager" class="FileManager" style="display: none">
-
-            <form id="checkbox_form">
-                <div id="checkbox_buttons">
-                    <label class="fileButton" for="deselect">Deselect</label>
-                    <label class="fileButton" for="delete">Delete</label>
-                    <input type="reset" id="deselect" value="Deselect" style="display: none">
-                    <input type="submit" id="delete" value="Delete" style="display: none">
-                </div>
-                <div id="checked_list" style="background-color: #FFF"></div>
-                <div id="checkbox_list"></div>
-            </form>
-
-        </div>
-
-        <div id="list_container">
-            <div id="List" class="List"></div>
-        </div>
-
-        <div id="Selector" class="Selector"></div>
-        <div id="Uploader" class="Uploader"></div>
-
-        <div id="Bg" class="Bg">
-            <!-- <div class="bgitem icon icon-video"></div>
- <div class="bgitem icon icon-gamepad"></div>
- <div class="bgitem icon icon-ipod"></div>
- <div class="bgitem icon icon-image"></div>
- <div class="bgitem icon icon-file"></div>
-
- <div class="bgitem icon icon-video"></div>
- <div class="bgitem icon icon-gamepad"></div>
- <div class="bgitem icon icon-ipod"></div>
- <div class="bgitem icon icon-file"></div>-->
-        </div>
-    </div>
-
-    <script type="text/javascript" src="js/anime.js?=version=1.0" charset="UTF-8"></script>
-    <script type="text/javascript" src="js/maquette.min.js" charset="UTF-8"></script>
-    <script type="text/javascript" src="js/all-alt.js?=version=2.92" charset="UTF-8"></script>
-    <script type="text/javascript" src="js/base64.js?=version=1.4" charset="UTF-8"></script>
-
-    <script type="text/javascript">
-        $menu_left = document.getElementById('menu_left_container');
-        $main = document.getElementById('main');
-        var menu_state = 1;
-
-        window.onload = function() {
-            if (window.innerWidth <= 1280) {
-                $menu_left.style.display = 'none';
-            } else {
-                if (menu_state == 1) {
-                    $menu_left.style.display = 'block';
-                }
-            }
-        };
-
-
-        window.onresize = function() {
-            if (window.innerWidth <= 1280) {
-                $menu_left.style.display = 'none';
-            } else {
-                if (menu_state == 1) {
-                    $menu_left.style.display = 'block';
-                    $main.style.width = 'calc(100% - 250px)';
-                    $main.style.marginLeft = '250px';
-                }
-            }
-        };
-
-        function showhide() {
-
-            if ($menu_left.style.display === 'none') {
-                $menu_left.style.display = 'block';
-                $menu_left.style.zIndex = '49';
-                if (menu_state == 1) {
-                    if (window.innerWidth >= 1280) {
-                        $main.style.width = 'calc(100% - 250px)';
-                        $main.style.marginLeft = '250px';
-                    }
-                }
-            } else {
-                $menu_left.style.display = 'none';
-                if (menu_state == 1) {
-                    if (window.innerWidth >= 1280) {
-                        $main.style.width = '100%';
-                        $main.style.marginLeft = '0px';
-                    }
-                }
-            }
-        };
-    </script>
-
+function donav() {
+    if ($("#main").hasClass("main")) {
+        if (window.innerWidth <= 1280) {
+            $("#main").width("100%").css("margin-left", "0px");
+            $("#nav").hide()
+        } else {
+            $("#main").width("calc(100% - 236.25px)").css("margin-left", "236.25px");
+            $("#nav").show()
+        }
+    } else {
+        $("#main").width("100%").css("margin-left", "0px");
+        $("#nav").hide()
+    }
+}
+$(window).on('load', function() {
+    dosearch();
+    donav();
+});
+$(window).on('resize', function() {
+    dosearch();
+    donav();
+});
+</script>
+<script type="text/javascript" src="js/all.js?v=5.02"></script>
 </body>
-
 </html>
