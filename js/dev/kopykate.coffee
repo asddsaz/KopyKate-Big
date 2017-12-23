@@ -35,6 +35,14 @@ class Page extends ZeroFrame
         @route(url, "seed")
         @state = {};
         @state.page = "seedbox"
+      else if base.href.indexOf("Latest") > -1
+        @route(url, "latest")
+        @state = {};
+        @state.page = "latest"
+      else if base.href.indexOf("Channel") > -1
+        @route(url, "channel")
+        @state = {};
+        @state.page = "channel"
       else if base.href.indexOf("Home") > -1
         @route("", "home")
         @state = {};
@@ -82,6 +90,17 @@ class Page extends ZeroFrame
   project_this: (mode) =>
     console.log("[KopyKate: Mode (" + mode + ")]")
     if mode is "home"
+      video_lister.order_by="peer"
+      video_lister.max_videos=10
+      video_lister.counter=1
+      video_lister.render()
+    else if mode is "latest"
+      video_lister.order_by="date"
+      video_lister.max_videos=10
+      video_lister.counter=1
+      video_lister.render()
+    else if mode is "channel"
+      video_lister.order_by="channel"
       video_lister.max_videos=10
       video_lister.counter=1
       video_lister.render()
@@ -114,6 +133,10 @@ class Page extends ZeroFrame
       @project_this("box")
     else if query.indexOf("Seed") > -1
       @project_this("seed")
+    else if query.indexOf("Latest") > -1
+      @project_this("latest")
+    else if query.indexOf("Channel") > -1
+      @project_this("channel")
     else
       @project_this("home")
 

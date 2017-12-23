@@ -4,8 +4,10 @@ class ItemList
 		@items_bykey = {}
 
 	sync: (rows, item_class, key) ->
+		console.log("Syncing: " + JSON.stringify(rows))
 		@items.splice(0, @items.length)  # Empty items
 		for row in rows
+			#console.log(row)
 			current_obj = @items_bykey[row[@key]]
 			if current_obj
 				current_obj.setRow(row)

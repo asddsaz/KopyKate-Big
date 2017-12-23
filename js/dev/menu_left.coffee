@@ -25,6 +25,16 @@ class left_menuify
     item_home_link.attr "href", "?Home"
     item_home_link.text "Home"
 
+    item_latest = $("<li></li>")
+    item_latest.attr "id", "item_latest"
+    item_latest.attr "class", "list_item li_latest"
+
+    item_latest_link = $("<a></a>")
+    item_latest_link.attr "id", "item_latest_link"
+    item_latest_link.attr "class", "item_link"
+    item_latest_link.attr "href", "?Latest"
+    item_latest_link.text "Airing Now"
+
     item_videobox = $("<div></div>")
     item_videobox.attr "id", "item_videobox"
     item_videobox.attr "class", "list_item li_videobox"
@@ -51,11 +61,15 @@ class left_menuify
     $("#menu_left_items").append item_head_version
     $("#menu_left_items").append item_home
     $("#item_home").append item_home_link
+    $("#menu_left_items").append item_latest
+    $("#item_latest").append item_latest_link
     $("#menu_left_items").append item_videobox
     $("#item_videobox").append item_videobox_link
     $("#menu_left_items").append item_seedbox
     $("#item_seedbox").append item_seedbox_link
     $("#item_home_link").on "click", ->
+      Page.nav(this.href)
+    $("#item_latest_link").on "click", ->
       Page.nav(this.href)
     $("#item_videobox_link").on "click", ->
       Page.nav(this.href)

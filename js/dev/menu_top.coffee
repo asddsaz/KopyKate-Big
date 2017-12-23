@@ -76,14 +76,18 @@ class top_menuify
     $("#search_button").append search_icon
     $("#search_wrap").append search_bar
     $("#search_bar").change ->
-      if Page.history_state["url"].indexOf("Home") > -1
-        video_lister.get_query()
-      else if Page.history_state["url"].indexOf("Box") > -1
-        videobox.get_query()
-      else if Page.history_state["url"].indexOf("Seed") > -1
-        seedbox.get_query()
+      if Page.history_state["url"]
+        if Page.history_state["url"].indexOf("Home") > -1
+          video_lister.get_query()
+        else if Page.history_state["url"].indexOf("Box") > -1
+          videobox.get_query()
+        else if Page.history_state["url"].indexOf("Seed") > -1
+          seedbox.get_query()
+        else
+          Page.set_url("?Home")
       else
-        Page.set_url("?Home")
+        video_lister.get_query()  
+      
     $("#upload_link").on "click", ->
       Page.nav(this.href)
     $("#site_logo").on "click", ->

@@ -30,22 +30,34 @@ class video_playing
         video_description = my_row['description']
         user_directory = my_row['directory']
 
+        stats_loaded = false
+
+        i = 0
         for my_file, i in res2
           optional_name = my_file['inner_path'].replace /.*\//, ""
           optional_peer = my_file['peer']
           optional_seed = my_file['peer_seed'] 
 
           if optional_name is file_name
-            $("#player_info").append "<span style='font-size: 17.5px'>" + video_title + "</span><br>"
-            $("#player_info").append "<span style='color: #a8a8a8'>" + video_channel + "</span><br>"
-            $("#player_info").append "<span style='color: #a8a8a8'>Peers - " + optional_seed + " / " + optional_peer + "</span><br>"
-            $("#player_info").append "<span style='color: #a8a8a8'>" + video_description + "</span>"
+            stats_loaded = true
+            $("#player_info").append "<span class='video_player_title'>" + video_title + "</span><br>"
+            $("#player_info").append "<span class='video_player_stats'>" + video_channel + "</span><br>"
+            $("#player_info").append "<span class='video_player_stats'>Peers - " + optional_seed + " / " + optional_peer + "</span><br>"
+            $("#player_info").append "<span class='video_player_brief'>" + video_description + "</span>"
+
+        if i is res2.length
+          if stats_loaded is false
+            $("#player_info").append "<span class='video_player_title'>" + video_title + "</span><br>"
+            $("#player_info").append "<span class='video_player_stats'>" + video_channel + "</span><br>"
+            $("#player_info").append "<span class='video_player_stats'>Peers - 0 / 0</span><br>"
+            $("#player_info").append "<span class='video_player_brief'>" + video_description + "</span>"   
 
         video_actual = $("<video></video>")
         video_actual.attr "id", "video_actual"
         video_actual.attr "class", "video_actual"
         video_actual.attr "src", "data/users/" + user_directory + "/" + file_name
         video_actual.attr "controls", true
+        video_actual.attr "autoplay", true
 
         $("#video_box").append video_actual
 
