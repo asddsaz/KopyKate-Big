@@ -126,6 +126,36 @@
         transform: scale(1.0);
     }
 }
+/*Signal spinner*/
+.signal_spinner {
+  width: 12.5px;
+  height: 12.5px;
+  margin: auto;
+  background-color: #333;
+
+  border-radius: 100%;  
+  -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+  animation: sk-scaleout 1.0s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-scaleout {
+  0% { -webkit-transform: scale(0) }
+  100% {
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+@keyframes sk-scaleout {
+  0% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 100% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+    opacity: 0;
+  }
+}
 /*Base64*/
 
 .search_toggle_icon {
@@ -160,13 +190,12 @@
     -moz-filter: invert(100%);
     -webkit-filter: invert(100%);
     filter: invert(100%);
-    width: 15px;
-    height: 15px;
-    padding: 2.5px;
+    width: 20px;
+    height: 20px;
     margin: auto;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 15px 15px;
+    background-size: 20px 20px;
     background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDEwMDAgMTAwMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTAwMCAxMDAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48bWV0YWRhdGE+IFN2ZyBWZWN0b3IgSWNvbnMgOiBodHRwOi8vd3d3Lm9ubGluZXdlYmZvbnRzLmNvbS9pY29uIDwvbWV0YWRhdGE+PGc+PHBhdGggZD0iTTY4MS4xLDY4MS4xYzE1My41LTE1My41LDE1My41LTQwMi40LDAtNTU2Yy0xNTMuNS0xNTMuNS00MDIuNC0xNTMuNS01NTYsMGMtMTUzLjUsMTUzLjUtMTUzLjUsNDAyLjQsMCw1NTZDMjc4LjcsODM0LjcsNTI3LjYsODM0LjcsNjgxLjEsNjgxLjFMNjgxLjEsNjgxLjFMNjgxLjEsNjgxLjFMNjgxLjEsNjgxLjF6IE02MTkuMyw2MTkuM2MtMTE5LjQsMTE5LjQtMzEzLDExOS40LTQzMi40LDBjLTExOS40LTExOS40LTExOS40LTMxMywwLTQzMi40YzExOS40LTExOS40LDMxMy0xMTkuNCw0MzIuNCwwQzczOC44LDMwNi4zLDczOC44LDQ5OS45LDYxOS4zLDYxOS4zTDYxOS4zLDYxOS4zTDYxOS4zLDYxOS4zTDYxOS4zLDYxOS4zeiIvPjxwYXRoIGQ9Ik02MTkuMyw2ODEuMWw2MS44LTYxLjhMOTkwLDkyOC4yTDkyOC4yLDk5MEw2MTkuMyw2ODEuMXoiLz48L2c+PC9zdmc+);
 }
 /*Main CSS*/
@@ -181,6 +210,11 @@ body {
     .delete_button {
         margin: 0;
     }
+}
+.channel_link {
+    display: block;
+    color: #333 !important;
+    text-decoration: none;
 }
 .delete_button {
     opacity: 0.25;
@@ -350,6 +384,8 @@ body {
 .player_info {
     width: 768px;
     /*padding: 7.5px;*/
+        max-width: 100%;
+        padding: 0px;
 }
 .search {
     position: fixed;
@@ -367,7 +403,7 @@ body {
     left: 0;
     z-index: 6;
     width: 100%;
-    margin-left: 0;
+    margin-left: -1px;
     margin-right: 0;
 }
 .search_button,
@@ -475,7 +511,7 @@ body {
 }
 .upload_link {
     float: right;
-    margin-right: 150px;
+    margin-right: 125px;
     padding: 25px 7.5px 25px 7.5px;
 }
 .video_actual {
@@ -484,9 +520,9 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    width: 768px;
+    width: 100%;
+    height: 100%;
     max-height: 432px;
-    max-width: 768px;
     margin: auto
 }
 .video_box {
@@ -528,6 +564,9 @@ body {
     padding: 7.5px;
     background: #fff;
 }
+.video_player_title {font-size: 17.5px; padding: 7.5px}
+.video_player_stats {color: #a8a8a8; padding: 7.5px}
+.video_player_brief {color: #a8a8a8; padding: 7.5px; display: inline-block; max-height: 260px; text-overflow: ellipsis; overflow: hidden}
 .video_row {
     padding: 7.5px 30px 7.5px 30px;
     min-height: 140px;
@@ -562,6 +601,9 @@ body {
         margin-left: 27.5%;
         margin-right: 27.5%;
     }
+    .search_wrap {
+        padding: 17.5px 0px 17.5px 0px
+    }
     /*.main {
         height: 100%;
         width: 100% !important;
@@ -575,43 +617,53 @@ body {
     .player_info {
         margin-left: auto;
         margin-right: auto;
+        max-width: 100%;
+        padding: 0px;
     }
     .video_box {
+        width: 768px;
         display: block;
         margin-left: auto !important;
         margin-right: auto !important;
         max-width: 100%;
-        min-width: 640px;
-        height: 360px;
+        max-height: 360px;
     }
     .video_actual {
-        width: 640px;
-        max-width: 100%;
-        min-width: 640px;
+        height: 100%;
+        width: 100%;
+        max-height: 360px;
     }
 }
 @media all and (max-width: 768px) {
+    .menu_left {
+        margin-top: 70px;
+        background-color: rgba(0, 0, 0, 0.85);
+    }
+    .item_link {
+        color: white;
+    }
     .upload_link {
-        margin-right: 75px;
+        margin-right: 85px;
     }
     .video_box {
         display: block;
+        width: 100%;
         margin-left: auto !important;
         margin-right: auto !important;
         max-width: 100%;
+        max-height: 288px;
         min-width: 512px;
-        height: 288px;
     }
     .video_actual {
-        width: 512px;
-        max-width: 100%;
-        min-width: 512px;
+        width: 100%;
     }
     .video_player {
         padding: 0px;
     }
     .player_info {
         padding: 7.5px;
+        max-width: 100%;
+        padding: 0px;
     }
     .pc {
         width: 35px;
@@ -643,7 +695,7 @@ body {
         filter: invert(100%);
     }
     .menu_top {
-        background-color: #d60039;
+        background-color: #ba002e;
         position: absolute !important;
         box-shadow: none;
     }
@@ -682,7 +734,7 @@ body {
     }
     .search_bar {
         position: absolute;
-        width: calc(100% - 50px)
+        width: calc(100% - 65px)
     }
     .search_swap {
         display: block !important;
@@ -699,25 +751,29 @@ body {
         padding: 0px;
     }
     .video_box {
+        width: 100%;
         max-width: 100%;
         min-width: 384px;
-        height: 216px;
+        min-height: 216px;
+        max-height: 288px;
     }
     .video_actual {
-        width: 384px;
-        max-width: 100%;
-        min-width: 384px;
+        height: 100%;
+        width: 100%;
+        /*max-height: 216px;*/
     }
 }
 @media all and (max-width: 512px) {
     .video_box {
+        width: 100%;
         max-width: 100%;
         min-width: 320px;
-        height: 180px;
+        min-height: 180px;
+        max-height: 216px;
     }
     .video_actual {
-        width: 320px;
-        max-width: 100%;
-        min-width: 320px;
+        height: 100%;
+        width: 100%;
+        /*max-height: 180px;*/
     }
 }
