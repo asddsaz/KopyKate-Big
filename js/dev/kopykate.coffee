@@ -72,9 +72,9 @@ class Page extends ZeroFrame
     console.log("[KopyKate: Request]")
     if cmd == "setSiteInfo"
       @set_site_info(params)
-      if params.event?[0] in ["file_done", "file_delete", "peernumber_updated"]
-        RateLimit 1000, =>
-          console.log("[KopyKate: Something changed!]")
+      #if params.event?[0] in ["file_done", "file_delete", "peernumber_updated"]
+      #  RateLimit 1000, =>
+      #    console.log("[KopyKate: Something changed!]")
           #video_lister.flush()
           #video_lister.update()
     else if cmd is "wrapperPopState"
@@ -91,17 +91,17 @@ class Page extends ZeroFrame
     console.log("[KopyKate: Mode (" + mode + ")]")
     if mode is "home"
       video_lister.order_by="peer"
-      video_lister.max_videos=10
+      video_lister.max_videos=15
       video_lister.counter=1
       video_lister.render()
     else if mode is "latest"
       video_lister.order_by="date"
-      video_lister.max_videos=10
+      video_lister.max_videos=15
       video_lister.counter=1
       video_lister.render()
     else if mode is "channel"
       video_lister.order_by="channel"
-      video_lister.max_videos=10
+      video_lister.max_videos=15
       video_lister.counter=1
       video_lister.render()
     else if mode is "video"
@@ -111,11 +111,11 @@ class Page extends ZeroFrame
     else if mode is "editor"
       editor.render()
     else if mode is "box"
-      videobox.max_videos=10
+      videobox.max_videos=15
       videobox.counter=1
       videobox.render()
     else if mode is "seed"
-      seedbox.max_videos=10
+      seedbox.max_videos=15
       seedbox.counter=1
       seedbox.render()
 

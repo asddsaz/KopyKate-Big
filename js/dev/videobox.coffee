@@ -2,18 +2,18 @@
 
 class videobox
   constructor: ->
-    @max_videos=10
+    @max_videos=15
     @query_string=""
     @counter=1
 
   more_videos_yes: =>
-    @max_videos+=10
+    @max_videos+=15
     @counter=1
     @update()
 
   flush: (mode) =>
     if mode is "all"
-      @max_videos=10
+      @max_videos=15
       @counter=1
     else
       @counter=1

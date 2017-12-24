@@ -2,20 +2,20 @@
 
 class video_lister
   constructor: ->
-    @max_videos=10
+    @max_videos=15
     #@last_max_videos=0
     @query_string=""
     @counter=1
     @order_by=""
 
   more_videos_yes: =>
-    @max_videos+=10
+    @max_videos+=15
     @counter=1
     @update()
 
   flush: (mode) =>
     if mode is "all"
-      @max_videos=10
+      @max_videos=15
       @counter=1
     else
       @counter=1
@@ -189,8 +189,8 @@ class video_lister
           for row2, i in res2
             for row1, j in res1
               stats[row2.inner_path] = row2
-              optional_name = row2.inner_path.replace /.*\//, ""
               optional_piecemap = optional_name + ".piecemap.msgpack"
+              optional_name = row2.inner_path.replace /.*\//, ""
    
               row1.inner_path = "data/users/#{row1.directory}/#{row1.file_name}"
               row1.stats = stats[row1.inner_path]
