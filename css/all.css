@@ -216,6 +216,32 @@ body {
     color: #333 !important;
     text-decoration: none;
 }
+.comment_box_input {
+    width: calc(100% - 40px);
+    padding: 5px 0px 5px 0px;
+    margin-bottom: 10px;
+    margin-left: 40px;
+    outline: none;
+    border-width: 0px;
+    border-bottom-width: 1px;
+    border-color: #e0e0e0;
+    color: #000000;
+    background: transparent;
+    border-style: solid;
+    border-radius: 0px;
+    text-shadow: undefined 0px 0px 5px px rgba(66, 66, 66, .75);
+}
+.comment_single {
+    padding: 5px 40px 5px 40px;
+}
+.comment_user {
+    font-size: 13.625px; font-weight: bold; color: #000;
+}
+.comment_text {
+    font-size: 13.625px; color: #333;
+    max-height: 100px;
+    overflow: auto;
+}
 .delete_button {
     opacity: 0.25;
     display: inline-block;
@@ -249,20 +275,35 @@ body {
     width: calc(100% - 75px) !important;
     display: inline-block !important;
 }
+.editor_row {
+    display: flex;
+}
 .editor_input_label {
-    width: 20%;
+    width: 17.5%;
     max-width: 150px;
     min-width: 80px;
-    display: inline-block;
+    display: block;
+    padding: 5px;
+    margin: 5px 7.5px 5px 15px;
+    height: 25px;
+}
+.editor_brief_input {
     padding: 5px;
     margin: 5px 15px 5px 15px;
-    height: 25px;
+    height: 100px;
+    width: 60%;
+    clear: both;
+    max-width: 300px;
+    min-width: 200px;
+    font-size: 15px;
+    font-family: Roboto;
 }
 .editor_container {
     width: 100%;
     clear: both;
 }
 .editor_container input {
+    font-family: Roboto;
     padding: 5px;
     margin: 5px 15px 5px 15px;
     height: 25px;
@@ -270,8 +311,9 @@ body {
     max-width: 300px;
     width: 60%;
     clear: both;
-    border: none;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    border: solid;
+    border-width: 1px;
+    border-color: #bababa;
     outline: none;
     color: #424242;
     font-size: 15px;
@@ -385,7 +427,7 @@ body {
     width: 768px;
     /*padding: 7.5px;*/
         max-width: 100%;
-        padding: 0px;
+        padding: 0px 0px 7.5px 0px;
 }
 .search {
     position: fixed;
@@ -471,6 +513,16 @@ body {
     background-color: #008BFF;
     padding: 7.5px;
     margin: 5px 15px 5px 15px;
+}
+.thumbnail_preview {
+    padding: 5px;
+    margin: 5px 15px 5px 15px;
+    display: block;
+    width: 240px;
+    height: 135px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 240px 135px;
 }
 .uploader,
 .editor {
@@ -564,9 +616,26 @@ body {
     padding: 7.5px;
     background: #fff;
 }
-.video_player_title {font-size: 17.5px; padding: 7.5px}
-.video_player_stats {color: #a8a8a8; padding: 7.5px}
-.video_player_brief {color: #a8a8a8; padding: 7.5px; display: inline-block; max-height: 260px; text-overflow: ellipsis; overflow: hidden}
+.video_player_title {font-size: 17.5px; padding: 15px 5px 5px 5px; display: block}
+.video_player_stats {
+    font-size: 15px; 
+    color: #666; 
+    padding: 5px 5px 15px 5px; 
+    display: block;
+    border: solid;
+    border-width: 0px;
+    border-color: #e8e8e8;
+    border-bottom-width: 1px;
+}
+.video_player_username {font-size: 13.625px; font-weight: bold; color: #000; padding: 15px 40px 15px 40px; display: block}
+.video_player_brief {
+    font-size: 13.625px; 
+    color: #333; 
+    padding: 15px 40px 15px 40px; 
+    display: inline-block; 
+    max-height: 100px; 
+    overflow-y: auto;
+    }
 .video_row {
     padding: 7.5px 30px 7.5px 30px;
     min-height: 140px;
@@ -635,6 +704,9 @@ body {
     }
 }
 @media all and (max-width: 768px) {
+    .editor_row {
+        flex-direction: column;
+    }
     .menu_left {
         margin-top: 70px;
         background-color: rgba(0, 0, 0, 0.85);
