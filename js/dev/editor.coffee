@@ -117,7 +117,7 @@ class editor
           brief_input.attr "class", "editor_brief_input"
           brief_input.attr "type", "text"
           brief_input.attr "name", "editor_brief"
-          brief_input.attr "value", video_description
+          brief_input.text video_description
 
           thumbnail_div = $("<div></div>")
           thumbnail_div.attr "id", "thumbnail_row"
