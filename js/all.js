@@ -810,6 +810,204 @@
 
   top_menuify = new top_menuify();
 
+  // video_player.coffee
+  video_playing = class video_playing {
+    constructor() {
+      this.register_comment = this.register_comment.bind(this);
+      this.write_comment = this.write_comment.bind(this);
+      this.load_comments = this.load_comments.bind(this);
+      this.render = this.render.bind(this);
+    }
+
+    register_comment(file_uri, body, date_added, cb) {
+      var inner_path;
+      inner_path = "data/users/" + Page.site_info.auth_address + "/data.json";
+      return Page.cmd("fileGet", [inner_path, false], (res) => {
+        if (res) {
+          res = JSON.parse(res);
+        }
+        if (res.comment === null) {
+          res.comment = {};
+        }
+        if (res.comment[file_uri] === null || res.comment[file_uri] === void 0) {
+          res.comment[file_uri] = [];
+        }
+        console.log(res.comment);
+        console.log(file_uri);
+        console.log(res.comment[file_uri]);
+        res.comment[file_uri].push({
+          body: body,
+          date_added: date_added
+        });
+        return Page.cmd("fileWrite", [inner_path, Text.fileEncode(res)], cb);
+      });
+    }
+
+    write_comment(file_date_added, file_directory, comment_body) {
+      var file_uri, load_comments, register_comment;
+      register_comment = this.register_comment;
+      load_comments = this.load_comments;
+      file_uri = file_date_added + "_" + file_directory;
+      return editor.check_content_json((res) => {
+        return register_comment(file_uri, comment_body, Time.timestamp(), function(res) {
+          load_comments();
+          return Page.cmd("siteSign", {
+            inner_path: "data/users/" + Page.site_info.auth_address + "/content.json"
+          }, function(res) {
+            return Page.cmd("sitePublish", {
+              inner_path: "data/users/" + Page.site_info.auth_address + "/content.json",
+              "sign": false
+            });
+          });
+        });
+      });
+    }
+
+    load_comments() {
+      var file_uri, init_url, query, real_url, video_date_added, video_user_address;
+      init_url = Page.history_state["url"];
+      real_url = init_url.split("Video=")[1];
+      video_date_added = real_url.split("_")[0];
+      video_user_address = real_url.split("_")[1];
+      file_uri = real_url;
+      query = "SELECT * FROM comment LEFT JOIN json USING (json_id) WHERE file_uri='" + real_url + "' ORDER BY date_added DESC";
+      return Page.cmd("dbQuery", [query], (res) => {
+        var comment, comment_body, comment_counter, comment_date_added, comment_directory, comment_id, comment_input, comment_single, comment_single_id, comment_text, comment_user, comment_user_id, k, len, results, write_comment;
+        comment_input = $("<input>");
+        comment_input.attr("id", "comment_box_input");
+        comment_input.attr("class", "comment_box_input");
+        comment_input.attr("placeholder", "Write a comment...");
+        comment_counter = 0;
+        $("#comment_actual").html("");
+        $("#comment_actual").append(comment_input);
+        write_comment = this.write_comment;
+        $("#comment_box_input").on("keypress", function(e) {
+          var comment_body;
+          comment_body = this.value;
+          if (e.which === 13) {
+            if (Page.site_info.cert_user_id) {
+              return write_comment(video_date_added, video_user_address, comment_body);
+            } else {
+              return Page.cmd("certSelect", [["zeroid.bit"]], (res) => {
+                return write_comment(video_date_added, video_user_address, comment_body);
+              });
+            }
+          }
+        });
+        results = [];
+        for (k = 0, len = res.length; k < len; k++) {
+          comment = res[k];
+          comment_body = comment.body;
+          comment_body = comment.body.replace(/</g, ' < ');
+          comment_body = comment.body.replace(/>/g, ' > ');
+          comment_date_added = comment.date_added;
+          comment_directory = comment.directory;
+          comment_user_id = comment.cert_user_id.split("@")[0];
+          comment_id = "comment_" + comment_date_added + "_" + comment_directory;
+          comment_single_id = "comment_" + comment_counter;
+          comment_single = $("<div></div>");
+          comment_single.attr("id", comment_single_id);
+          comment_single.attr("class", "comment_single");
+          comment_user = $("<div></div>");
+          comment_user.attr("id", "comment_user");
+          comment_user.attr("class", "comment_user");
+          comment_user.text(comment_user_id.charAt(0).toUpperCase() + comment_user_id.slice(1));
+          comment_text = $("<div></div>");
+          comment_text.attr("id", "comment_text");
+          comment_text.attr("class", "comment_text");
+          comment_text.text(comment_body);
+          $("#comment_actual").append(comment_single);
+          $("#" + comment_single_id).append(comment_user);
+          $("#" + comment_single_id).append(comment_text);
+          results.push(comment_counter = comment_counter + 1);
+        }
+        return results;
+      });
+    }
+
+    render() {
+      var comment_actual, comment_div, date_added, init_url, query, real_url, user_address, video_box, video_info, video_player;
+      init_url = Page.history_state["url"];
+      real_url = init_url.split("Video=")[1];
+      date_added = real_url.split("_")[0];
+      user_address = real_url.split("_")[1];
+      video_player = $("<div></div>");
+      video_player.attr("id", "video_player");
+      video_player.attr("class", "video_player");
+      video_box = $("<div></div>");
+      video_box.attr("id", "video_box");
+      video_box.attr("class", "video_box");
+      video_info = $("<div></div>");
+      video_info.attr("id", "player_info");
+      video_info.attr("class", "player_info");
+      comment_div = $("<div></div>");
+      comment_div.attr("id", "comment_box");
+      comment_div.attr("class", "player_info");
+      comment_actual = $("<div></div>");
+      comment_actual.attr("id", "comment_actual");
+      comment_actual.attr("class", "comment_actual");
+      query = "SELECT * FROM file LEFT JOIN json USING (json_id) WHERE date_added='" + date_added + "' AND directory='" + user_address + "'";
+      Page.cmd("dbQuery", [query], (res1) => {
+        return Page.cmd("optionalFileList", {
+          filter: "",
+          limit: 1000
+        }, (res2) => {
+          var file_name, i, k, len, my_file, my_row, optional_name, optional_peer, optional_seed, stats_loaded, user_directory, video_actual, video_channel, video_description, video_title;
+          my_row = res1[0];
+          file_name = my_row['file_name'];
+          video_title = my_row['title'];
+          video_channel = my_row['cert_user_id'].split("@")[0];
+          video_description = my_row['description'];
+          user_directory = my_row['directory'];
+          stats_loaded = false;
+          i = 0;
+          for (i = k = 0, len = res2.length; k < len; i = ++k) {
+            my_file = res2[i];
+            optional_name = my_file['inner_path'].replace(/.*\//, "");
+            optional_peer = my_file['peer'];
+            optional_seed = my_file['peer_seed'];
+            if (optional_name === file_name) {
+              stats_loaded = true;
+              $("#player_info").append("<span class='video_player_title'>" + video_title + "</span>");
+              $("#player_info").append("<span class='video_player_stats'>" + optional_seed + " / " + optional_peer + " peers</span>");
+              $("#player_info").append("<span class='video_player_username'>" + video_channel.charAt(0).toUpperCase() + video_channel.slice(1) + "</span>");
+              $("#player_info").append("<span class='video_player_brief'>" + video_description + "</span>");
+            }
+          }
+          if (i === res2.length) {
+            if (stats_loaded === false) {
+              $("#player_info").append("<span class='video_player_title'>" + video_title + "</span><br>");
+              $("#player_info").append("<span class='video_player_stats'>0 / 0 peers</span><br>");
+              $("#player_info").append("<span class='video_player_username'>" + video_channel.charAt(0).toUpperCase() + video_channel.slice(1) + "</span><br>");
+              $("#player_info").append("<span class='video_player_brief'>" + video_description + "</span>");
+            }
+          }
+          video_actual = $("<video></video>");
+          video_actual.attr("id", "video_actual");
+          video_actual.attr("class", "video_actual");
+          video_actual.attr("src", "data/users/" + user_directory + "/" + file_name);
+          video_actual.attr("controls", true);
+          video_actual.attr("autoplay", true);
+          return $("#video_box").append(video_actual);
+        });
+      });
+      $("#main").attr("class", "main_nomenu");
+      $("#main").html("");
+      donav();
+      //$("#nav").hide()
+      //$("#main").attr "style", "width: 100%; margin-left: 0px"
+      $("#main").append(video_player);
+      $("#video_player").append(video_box);
+      $("#video_player").append(video_info);
+      $("#video_player").append(comment_div);
+      $("#comment_box").append(comment_actual);
+      return this.load_comments();
+    }
+
+  };
+
+  video_playing = new video_playing();
+
   // video_list.coffee
   video_lister = class video_lister {
     constructor() {
@@ -822,7 +1020,7 @@
       this.print_row = this.print_row.bind(this);
       this.update = this.update.bind(this);
       this.render = this.render.bind(this);
-      this.max_videos = 10;
+      this.max_videos = 15;
       //@last_max_videos=0
       this.query_string = "";
       this.counter = 1;
@@ -830,14 +1028,14 @@
     }
 
     more_videos_yes() {
-      this.max_videos += 10;
+      this.max_videos += 15;
       this.counter = 1;
       return this.update();
     }
 
     flush(mode) {
       if (mode === "all") {
-        this.max_videos = 10;
+        this.max_videos = 15;
         return this.counter = 1;
       } else {
         return this.counter = 1;
@@ -1027,8 +1225,8 @@
                 for (j = l = 0, len1 = res1.length; l < len1; j = ++l) {
                   row1 = res1[j];
                   stats[row2.inner_path] = row2;
-                  optional_name = row2.inner_path.replace(/.*\//, "");
                   optional_piecemap = optional_name + ".piecemap.msgpack";
+                  optional_name = row2.inner_path.replace(/.*\//, "");
                   row1.inner_path = `data/users/${row1.directory}/${row1.file_name}`;
                   row1.stats = stats[row1.inner_path];
                   if (row1.stats == null) {
@@ -1147,93 +1345,27 @@
 
   video_lister = new video_lister();
 
-  // video_player.coffee
-  video_playing = class video_playing {
-    constructor() {
-      this.render = this.render.bind(this);
-    }
-
-    render() {
-      var date_added, init_url, query, real_url, user_address, video_box, video_info, video_player;
-      init_url = Page.history_state["url"];
-      real_url = init_url.split("Video=")[1];
-      date_added = real_url.split("_")[0];
-      user_address = real_url.split("_")[1];
-      video_player = $("<div></div>");
-      video_player.attr("id", "video_player");
-      video_player.attr("class", "video_player");
-      video_box = $("<div></div>");
-      video_box.attr("id", "video_box");
-      video_box.attr("class", "video_box");
-      video_info = $("<div></div>");
-      video_info.attr("id", "player_info");
-      video_info.attr("class", "player_info");
-      query = "SELECT * FROM file LEFT JOIN json USING (json_id) WHERE date_added='" + date_added + "' AND directory='" + user_address + "'";
-      Page.cmd("dbQuery", [query], (res1) => {
-        return Page.cmd("optionalFileList", {
-          filter: "",
-          limit: 1000
-        }, (res2) => {
-          var file_name, i, k, len, my_file, my_row, optional_name, optional_peer, optional_seed, stats_loaded, user_directory, video_actual, video_channel, video_description, video_title;
-          my_row = res1[0];
-          file_name = my_row['file_name'];
-          video_title = my_row['title'];
-          video_channel = my_row['cert_user_id'];
-          video_description = my_row['description'];
-          user_directory = my_row['directory'];
-          stats_loaded = false;
-          i = 0;
-          for (i = k = 0, len = res2.length; k < len; i = ++k) {
-            my_file = res2[i];
-            optional_name = my_file['inner_path'].replace(/.*\//, "");
-            optional_peer = my_file['peer'];
-            optional_seed = my_file['peer_seed'];
-            if (optional_name === file_name) {
-              stats_loaded = true;
-              $("#player_info").append("<span class='video_player_title'>" + video_title + "</span><br>");
-              $("#player_info").append("<span class='video_player_stats'>" + video_channel + "</span><br>");
-              $("#player_info").append("<span class='video_player_stats'>Peers - " + optional_seed + " / " + optional_peer + "</span><br>");
-              $("#player_info").append("<span class='video_player_brief'>" + video_description + "</span>");
-            }
-          }
-          if (i === res2.length) {
-            if (stats_loaded === false) {
-              $("#player_info").append("<span class='video_player_title'>" + video_title + "</span><br>");
-              $("#player_info").append("<span class='video_player_stats'>" + video_channel + "</span><br>");
-              $("#player_info").append("<span class='video_player_stats'>Peers - 0 / 0</span><br>");
-              $("#player_info").append("<span class='video_player_brief'>" + video_description + "</span>");
-            }
-          }
-          video_actual = $("<video></video>");
-          video_actual.attr("id", "video_actual");
-          video_actual.attr("class", "video_actual");
-          video_actual.attr("src", "data/users/" + user_directory + "/" + file_name);
-          video_actual.attr("controls", true);
-          video_actual.attr("autoplay", true);
-          return $("#video_box").append(video_actual);
-        });
-      });
-      $("#main").attr("class", "main_nomenu");
-      $("#main").html("");
-      donav();
-      //$("#nav").hide()
-      //$("#main").attr "style", "width: 100%; margin-left: 0px"
-      $("#main").append(video_player);
-      $("#video_player").append(video_box);
-      return $("#video_player").append(video_info);
-    }
-
-  };
-
-  video_playing = new video_playing();
-
   // editor.coffee
   editor = class editor {
     constructor() {
+      this.convert_base64 = this.convert_base64.bind(this);
       this.check_content_json = this.check_content_json.bind(this);
       this.register_info = this.register_info.bind(this);
       this.save_info = this.save_info.bind(this);
       this.render = this.render.bind(this);
+    }
+
+    convert_base64() {
+      var max_size, thumbnail_upload;
+      max_size = 1024 * 25;
+      thumbnail_upload = $("#thumbnail_upload").prop("files")[0];
+      if (thumbnail_upload && thumbnail_upload.size < max_size) {
+        return convertImage(thumbnail_upload);
+      } else {
+        Page.cmd("wrapperNotification", ["info", "Max image size: 25kb (Tip: use GIMP or online compression tools to reduce resolution/quality!)"]);
+        debugger;
+        return false;
+      }
     }
 
     check_content_json(cb) {
@@ -1311,7 +1443,7 @@
       editorbox.attr("class", "editor");
       query = "SELECT * FROM file LEFT JOIN json USING (json_id) WHERE date_added='" + date_added + "' AND directory='" + user_address + "'";
       Page.cmd("dbQuery", [query], (res) => {
-        var brief_div, brief_input, brief_label, editor_container, editor_submit, file_name, my_row, save_info, title_div, title_input, title_label, user_directory, video_date_added, video_description, video_image, video_size, video_title, video_type;
+        var brief_div, brief_input, brief_label, convert_base64, editor_container, editor_submit, file_name, my_row, save_info, thumbnail_container, thumbnail_div, thumbnail_image, thumbnail_input, thumbnail_title, thumbnail_upload, thumbnail_upload_label, title_div, title_input, title_label, user_directory, video_date_added, video_description, video_image, video_size, video_title, video_type;
         if (res.length === 0) {
           return $("#editor").html("<span>Error: No such video found!</span>");
         } else {
@@ -1348,27 +1480,65 @@
             brief_div = $("<div></div>");
             brief_div.attr("id", "brief_row");
             brief_div.attr("class", "editor_row");
-            brief_label = $("<label></label>");
-            brief_label.attr("for", "editor_brief");
+            brief_label = $("<span></span>");
             brief_label.attr("class", "editor_input_label");
             brief_label.text("Description");
-            brief_input = $("<input>");
+            brief_input = $("<textarea>");
             brief_input.attr("id", "editor_brief");
-            brief_input.attr("class", "editor_input");
+            brief_input.attr("class", "editor_brief_input");
             brief_input.attr("type", "text");
             brief_input.attr("name", "editor_brief");
             brief_input.attr("value", video_description);
+            thumbnail_div = $("<div></div>");
+            thumbnail_div.attr("id", "thumbnail_row");
+            thumbnail_div.attr("class", "editor_row");
+            thumbnail_title = $("<span></span>");
+            thumbnail_title.attr("class", "editor_input_label");
+            thumbnail_title.text("Thumbnail");
+            thumbnail_container = $("<div></div>");
+            thumbnail_container.attr("id", "thumbnail_container");
+            thumbnail_container.attr("class", "thumbnail_container");
+            thumbnail_image = $("<div></div>");
+            thumbnail_image.attr("id", "thumbnail_preview");
+            thumbnail_image.attr("class", "thumbnail_preview");
+            thumbnail_image.css("background-image", "url('" + video_image + "')");
+            thumbnail_input = $("<input>");
+            thumbnail_input.attr("id", "thumbnail_input");
+            thumbnail_input.attr("class", "editor_input");
+            thumbnail_input.attr("type", "text");
+            thumbnail_input.attr("name", "thumbnail_input");
+            thumbnail_input.attr("value", video_image);
+            thumbnail_input.attr("style", "display: none");
+            thumbnail_upload_label = $("<label></label>");
+            thumbnail_upload_label.attr("class", "standard_button");
+            thumbnail_upload_label.attr("for", "thumbnail_upload");
+            thumbnail_upload_label.text("UPLOAD IMAGE");
+            thumbnail_upload = $("<input>");
+            thumbnail_upload.attr("id", "thumbnail_upload");
+            thumbnail_upload.attr("type", "file");
+            thumbnail_upload.attr("style", "display: none");
             $("#editor").append(editor_container);
-            $("#editor_container").append(title_label);
-            $("#editor_container").append(title_input);
-            $("#editor_container").append("<br>");
-            $("#editor_container").append(brief_label);
-            $("#editor_container").append(brief_input);
-            $("#editor_container").append("<br>");
+            $("#editor_container").append(title_div);
+            $("#title_row").append(title_label);
+            $("#title_row").append(title_input);
+            $("#editor_container").append(brief_div);
+            $("#brief_row").append(brief_label);
+            $("#brief_row").append(brief_input);
+            $("#editor_container").append(thumbnail_div);
+            $("#thumbnail_row").append(thumbnail_title);
+            $("#thumbnail_row").append(thumbnail_container);
+            $("#thumbnail_container").append(thumbnail_image);
             $("#editor_container").append(editor_submit);
+            $("#editor_container").append(thumbnail_upload_label);
+            $("#editor_container").append(thumbnail_upload);
+            $("#editor_container").append(thumbnail_input);
+            convert_base64 = this.convert_base64;
+            $("#thumbnail_upload").on("change", function(e) {
+              return convert_base64();
+            });
             save_info = this.save_info;
             return $("#editor_submit_button").on("click", function(e) {
-              save_info(file_name, video_date_added, video_size, $("#editor_title").val(), $("#editor_brief").val(), video_image);
+              save_info(file_name, video_date_added, video_size, $("#editor_title").val(), $("#editor_brief").val(), $("#thumbnail_input").val());
               return e.preventDefault();
             });
           } else {
@@ -1594,20 +1764,20 @@
       this.delete_video = this.delete_video.bind(this);
       this.update = this.update.bind(this);
       this.render = this.render.bind(this);
-      this.max_videos = 10;
+      this.max_videos = 15;
       this.query_string = "";
       this.counter = 1;
     }
 
     more_videos_yes() {
-      this.max_videos += 10;
+      this.max_videos += 15;
       this.counter = 1;
       return this.update();
     }
 
     flush(mode) {
       if (mode === "all") {
-        this.max_videos = 10;
+        this.max_videos = 15;
         return this.counter = 1;
       } else {
         return this.counter = 1;
@@ -1813,20 +1983,20 @@
       this.delete_optional_files = this.delete_optional_files.bind(this);
       this.update = this.update.bind(this);
       this.render = this.render.bind(this);
-      this.max_videos = 10;
+      this.max_videos = 15;
       this.query_string = "";
       this.counter = 1;
     }
 
     more_videos_yes() {
-      this.max_videos += 10;
+      this.max_videos += 15;
       this.counter = 1;
       return this.update();
     }
 
     flush(mode) {
       if (mode === "all") {
-        this.max_videos = 10;
+        this.max_videos = 15;
         return this.counter = 1;
       } else {
         return this.counter = 1;
@@ -2084,16 +2254,13 @@
     }
 
     onRequest(cmd, params) {
-      var ref2, ref3;
       boundMethodCheck(this, Page);
       console.log("[KopyKate: Request]");
       if (cmd === "setSiteInfo") {
-        this.set_site_info(params);
-        if ((ref2 = (ref3 = params.event) != null ? ref3[0] : void 0) === "file_done" || ref2 === "file_delete" || ref2 === "peernumber_updated") {
-          return RateLimit(1000, () => {
-            return console.log("[KopyKate: Something changed!]");
-          });
-        }
+        return this.set_site_info(params);
+      //if params.event?[0] in ["file_done", "file_delete", "peernumber_updated"]
+      //  RateLimit 1000, =>
+      //    console.log("[KopyKate: Something changed!]")
       //video_lister.flush()
       //video_lister.update()
       } else if (cmd === "wrapperPopState") {
@@ -2114,17 +2281,17 @@
       console.log("[KopyKate: Mode (" + mode + ")]");
       if (mode === "home") {
         video_lister.order_by = "peer";
-        video_lister.max_videos = 10;
+        video_lister.max_videos = 15;
         video_lister.counter = 1;
         return video_lister.render();
       } else if (mode === "latest") {
         video_lister.order_by = "date";
-        video_lister.max_videos = 10;
+        video_lister.max_videos = 15;
         video_lister.counter = 1;
         return video_lister.render();
       } else if (mode === "channel") {
         video_lister.order_by = "channel";
-        video_lister.max_videos = 10;
+        video_lister.max_videos = 15;
         video_lister.counter = 1;
         return video_lister.render();
       } else if (mode === "video") {
@@ -2134,11 +2301,11 @@
       } else if (mode === "editor") {
         return editor.render();
       } else if (mode === "box") {
-        videobox.max_videos = 10;
+        videobox.max_videos = 15;
         videobox.counter = 1;
         return videobox.render();
       } else if (mode === "seed") {
-        seedbox.max_videos = 10;
+        seedbox.max_videos = 15;
         seedbox.counter = 1;
         return seedbox.render();
       }

@@ -5,13 +5,15 @@ var currentFile;
 
 function convertImage(currentFile) {
     var success = function(value) {
-        var edit_textarea = document.getElementById("edit_textarea");
+        var edit_textarea = document.getElementById("thumbnail_input");
+        var edit_preview = document.getElementById("thumbnail_preview")
         var inputEvent = new Event('input', {
             'bubbles': true,
             'cancelable': true
         });
         dataUri = 'data:' + imageType(currentFile) + ';base64,' + value;
         edit_textarea.value = dataUri;
+        edit_preview.style.backgroundImage = "url('" + dataUri + "')"
         edit_textarea.dispatchEvent(inputEvent);
     }
     var error = function(message) {
