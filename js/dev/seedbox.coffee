@@ -57,15 +57,22 @@ class seedbox
             file_name = row2['inner_path'].replace /.*\//, ""
             file_seed = row2['peer_seed']
             file_peer = row2['peer']
+            file_size = row2['bytes_downloaded']
             video_name = row1['file_name']
             video_title = row1['title']
             video_brief = row1['description']
             video_image = row1['image_link']
             video_date_added = row1['date_added']
             video_user_address = row1['directory']
+            video_size = row1['size']
 
             if video_name is file_name and @counter < @max_videos
               file_seed_no_null = file_seed || 0
+              
+              if file_size >= video_size
+                text_display = "DONE " + Text.formatSize(video_size)
+              else
+                text_display = Text.formatSize(file_size) + " / " + Text.formatSize(video_size)
 
               video_string = video_date_added + "_" + video_user_address
               video_row_id = "seedrow_" + @counter
@@ -90,6 +97,10 @@ class seedbox
 
               checkmark_span = $("<span></span>")
               checkmark_span.attr "class", "checkmark"
+              
+              megabytes = $("<span></span>")
+              megabytes.attr "class", "video_link seedbox_bytes"
+              megabytes.text text_display
 
               video_link_id = "link_" + video_string
               video_link = $("<a></a>")
@@ -102,6 +113,7 @@ class seedbox
               $("#" + video_row_id).append checkbox_label
               $("#" + checkbox_label_id).append video_checkbox
               $("#" + checkbox_label_id).append checkmark_span
+              $("#" + video_row_id).append megabytes
               $("#" + video_row_id).append video_link
               $("#" + video_link_id).on "click", ->
                 Page.nav(this.href)

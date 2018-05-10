@@ -22,8 +22,10 @@ class uploader
     Page.cmd "fileGet", [inner_path, false], (res) =>
       if res
         res = JSON.parse(res)
-      if res == null 
+      if res is null or res is undefined
         res = {}
+      if res.file is null or res.file is undefined
+        res.file = {}
       res.file[file_name] = {title: title, type: type, description: description, image_link: image_link, size: file_size, date_added: date_added}
       Page.cmd "fileWrite", [inner_path, Text.fileEncode(res)], cb
 
@@ -39,8 +41,8 @@ class uploader
       Page.cmd("wrapperNotification", ["info", "Maximum file size on this site: 2000MB"])
       $("#uploader_title").html "<span>Error!</span>" 
       return false
-    if files.size < 1 * 1024 * 1024
-      Page.cmd("wrapperNotification", ["info", "Minimum file size: 1MB"])
+    if files.size < 0.1 * 1024 * 1024
+      Page.cmd("wrapperNotification", ["info", "Minimum file size: 100kb"])
       $("#uploader_title").html "<span>Error!</span>" 
       return false
     if files.name.split(".").slice(-1)[0] not in ["mp4", "m4v", "webm"]

@@ -12,7 +12,6 @@ class ZeroFrame
 		@init()
 		@ready = false
 
-
 	init: ->
 		@
 

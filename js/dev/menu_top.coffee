@@ -46,11 +46,19 @@ class top_menuify
     upload_link.attr "id", "upload_link"
     upload_link.attr "class", "upload_link"
     upload_link.attr "href", "?Upload"
-    # upload_link.text "Upload video!"
 
     upload_icon = $("<div></div>")
     upload_icon.attr "id", "main_upload"
     upload_icon.attr "class", "main_upload"
+
+    channel_link = $("<a></a>")
+    channel_link.attr "id", "usr_channel_link"
+    channel_link.attr "class", "usr_channel_link"
+    channel_link.attr "href", "?Profile"
+    
+    channel_icon = $("<div></div>")
+    channel_icon.attr "id", "channel_icon"
+    channel_icon.attr "class", "channel_icon"
 
     search_swap = $("<a></a>")
     search_swap.attr "id", "search_swap"
@@ -66,8 +74,10 @@ class top_menuify
     $("#menu_top").append main_menu
     $("#menu_top").append logo
     $("#search").append search_wrap
+    $("#menu_top").append channel_link
     $("#menu_top").append upload_link
     $("#upload_link").html upload_icon
+    $("#usr_channel_link").html channel_icon
     $("#menu_top").append search_swap
     $("#search_swap").append search_swap_icon
     $("#search_wrap").append toggle_button
@@ -79,6 +89,10 @@ class top_menuify
       if Page.history_state["url"]
         if Page.history_state["url"].indexOf("Home") > -1
           video_lister.get_query()
+        else if Page.history_state["url"].indexOf("Latest") > -1
+          video_lister.get_query()
+        else if Page.history_state["url"].indexOf("Channel") > -1
+          video_lister.get_query()
         else if Page.history_state["url"].indexOf("Box") > -1
           videobox.get_query()
         else if Page.history_state["url"].indexOf("Seed") > -1
@@ -88,6 +102,8 @@ class top_menuify
       else
         video_lister.get_query()  
       
+    $("#usr_channel_link").on "click", ->
+      Page.nav(this.href)  
     $("#upload_link").on "click", ->
       Page.nav(this.href)
     $("#site_logo").on "click", ->

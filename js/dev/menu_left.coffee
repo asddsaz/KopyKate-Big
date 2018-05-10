@@ -13,7 +13,7 @@ class left_menuify
     item_head_version = $("<li></li>")
     item_head_version.attr "id", "item_head_version"
     item_head_version.attr "class", "list_item li_head"
-    item_head_version.text "BETA v0.2.0"
+    item_head_version.text "BETA v0.2.06"
 
     item_home = $("<li></li>")
     item_home.attr "id", "item_home"
@@ -35,7 +35,7 @@ class left_menuify
     item_latest_link.attr "href", "?Latest"
     item_latest_link.text "Airing Now"
 
-    item_videobox = $("<div></div>")
+    item_videobox = $("<li></li>")
     item_videobox.attr "id", "item_videobox"
     item_videobox.attr "class", "list_item li_videobox"
 
@@ -45,7 +45,7 @@ class left_menuify
     item_videobox_link.attr "href", "?Box"
     item_videobox_link.text "VideoBox"
 
-    item_seedbox = $("<div></div>")
+    item_seedbox = $("<li></li>")
     item_seedbox.attr "id", "item_seedbox"
     item_seedbox.attr "class", "list_item li_seedbox"
     
@@ -54,6 +54,16 @@ class left_menuify
     item_seedbox_link.attr "class", "item_link"
     item_seedbox_link.attr "href", "?Seed"
     item_seedbox_link.text "SeedBox"
+
+    item_source = $("<li></li>")
+    item_source.attr "id", "item_source"
+    item_source.attr "class", "list_item li_source"
+
+    item_source_link = $("<a></a>")
+    item_source_link.attr "id", "item_source_link"
+    item_source_link.attr "class", "item_link"
+    item_source_link.attr "href", "http://127.0.0.1:43110/1GitLiXB6t5r8vuU2zC6a8GYj9ME6HMQ4t/repo/?1FgSciF793iXrbFdGyK2GG1QPfD98DWMnu"
+    item_source_link.text "Source Code"
 
     $("#nav").html ""
     $("#nav").append menu_left
@@ -67,6 +77,8 @@ class left_menuify
     $("#item_videobox").append item_videobox_link
     $("#menu_left_items").append item_seedbox
     $("#item_seedbox").append item_seedbox_link
+    $("#menu_left_items").append item_source
+    $("#item_source").append item_source_link
     $("#item_home_link").on "click", ->
       Page.nav(this.href)
     $("#item_latest_link").on "click", ->

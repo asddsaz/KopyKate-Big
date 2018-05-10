@@ -118,7 +118,7 @@ class videobox
               video_link_id = "vlink_" + video_string
               video_link = $("<a></a>")
               video_link.attr "id", video_link_id
-              video_link.attr "class", "video_link edit_link"
+              video_link.attr "class", "video_link edit_link_alt"
               video_link.attr "href", "?Video=" + video_string
               video_link.text video_title
 

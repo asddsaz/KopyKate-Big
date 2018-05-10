@@ -27,6 +27,10 @@ class Page extends ZeroFrame
         @route(url, "editor")
         @state = {};
         @state.page = "editor"
+      else if base.href.indexOf("Profile") > -1
+        @route(url, "profile")
+        @state = {};
+        @state.page = "profile"
       else if base.href.indexOf("Box") > -1
         @route(url, "box")
         @state = {};
@@ -110,6 +114,8 @@ class Page extends ZeroFrame
       uploader.render()
     else if mode is "editor"
       editor.render()
+    else if mode is "profile"
+      profile_editor.render()
     else if mode is "box"
       videobox.max_videos=15
       videobox.counter=1
@@ -129,6 +135,8 @@ class Page extends ZeroFrame
       @project_this("upload")
     else if query.indexOf("Editor") > -1
       @project_this("editor")
+    else if query.indexOf("Profile") > -1
+      @project_this("profile")
     else if query.indexOf("Box") > -1
       @project_this("box")
     else if query.indexOf("Seed") > -1

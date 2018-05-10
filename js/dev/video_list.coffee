@@ -161,23 +161,26 @@ class video_lister
     console.log "[KopyKate: Updating video list]"
 
     if @order_by is "peer"
-      order_actual = {orderby: "peer DESC", filter: "", limit: 1000}
+      order_actual = {orderby: "peer DESC", filter: "bigfile", address: "18Pfr2oswXvD352BbJvo59gZ3GbdbipSzh", limit: 1000}
       query_string_no_space = @query_string.replace /\s/g, "%"
       query = "WHERE file.title LIKE '%" +query_string_no_space+ "%'"
+      file_limit = ""
     else if @order_by is "channel"
       init_url = Page.history_state["url"]
       channel_name = init_url.split("Channel=")[1]
-      order_actual = {filter: "", limit: 1000}
+      order_actual = {filter: "", address: "18Pfr2oswXvD352BbJvo59gZ3GbdbipSzh", limit: 1000}
       query_string_no_space = @query_string.replace /\s/g, "%"
       query = "WHERE cert_user_id='" + channel_name + "' AND file.title LIKE '%" +query_string_no_space+ "%'"
+      file_limit = " LIMIT " + @max_videos + ""
     else
-      order_actual = {filter: "", limit: 1000}
+      order_actual = {filter: "", address: "18Pfr2oswXvD352BbJvo59gZ3GbdbipSzh", limit: 1000}
       query_string_no_space = @query_string.replace /\s/g, "%"
       query = "WHERE file.title LIKE '%" +query_string_no_space+ "%'"
+      file_limit = " LIMIT " + @max_videos + ""
 
 
     #console.log(query)
-    Page.cmd "dbQuery", ["SELECT * FROM file LEFT JOIN json USING (json_id) "+query+" ORDER BY date_added DESC"], (res1) =>
+    Page.cmd "dbQuery", ["SELECT * FROM file LEFT JOIN json USING (json_id) "+query+" ORDER BY date_added DESC" + file_limit], (res1) =>
       Page.cmd "optionalFileList", order_actual, (res2) =>
 
         $("#video_list").html ""
