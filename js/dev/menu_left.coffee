@@ -13,7 +13,7 @@ class left_menuify
     item_head_version = $("<li></li>")
     item_head_version.attr "id", "item_head_version"
     item_head_version.attr "class", "list_item li_head"
-    item_head_version.text "BETA v0.2.06"
+    item_head_version.text "BETA v0.2.07"
 
     item_home = $("<li></li>")
     item_home.attr "id", "item_home"
