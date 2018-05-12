@@ -837,26 +837,30 @@
     function profile_editor() {
       this.render = bind(this.render, this);
       this.render_box = bind(this.render_box, this);
+      this.render_timeout;
     }
 
     profile_editor.prototype.render_box = function() {
-      $("#profile_editor").text("You have successfully logged in! ! !");
-      return $("#profile_editor_title").text("Your user name is:");
+      $("#profile_editor").text("Welcome to KopyKate BIG!");
+      $("#profile_editor_title").text("You are logged in as:");
+      return $("#profile_editor_user").text(Page.site_info.cert_user_id);
     };
 
     profile_editor.prototype.render = function() {
-      var container_editorbox, profile_editorbox, title_peditorbox, user_peditorbox;
+      var container_editorbox, profile_editorbox, render_box, render_user, title_peditorbox, user_peditorbox;
       console.log("[KopyKate: Rendering profile editor.]");
       container_editorbox = $("<div></div>");
       container_editorbox.attr("id", "container_editorbox");
       container_editorbox.attr("class", "editor");
       profile_editorbox = $("<div></div>");
       profile_editorbox.attr("id", "profile_editor");
+      profile_editorbox.attr("class", "peditor_divs");
       title_peditorbox = $("<div></div>");
       title_peditorbox.attr("id", "profile_editor_title");
+      title_peditorbox.attr("class", "peditor_divs");
       user_peditorbox = $("<div></div>");
       user_peditorbox.attr("id", "profile_editor_user");
-      user_peditorbox.text(Page.site_info.cert_user_id);
+      user_peditorbox.attr("class", "peditor_divs");
       $("#main").attr("class", "main_nomenu");
       $("#main").html("");
       donav();
@@ -864,19 +868,27 @@
       $("#container_editorbox").append(profile_editorbox);
       $("#container_editorbox").append(title_peditorbox);
       $("#container_editorbox").append(user_peditorbox);
-      if (Page.site_info) {
-        if (Page.site_info.cert_user_id) {
-          return this.render_box();
-        } else {
-          return Page.cmd("certSelect", [["zeroid.bit"]], (function(_this) {
-            return function(res) {
-              return _this.render_box();
-            };
-          })(this));
+      $("#profile_editor").text("Loading user info...");
+      render_box = this.render_box;
+      render_user = this.render_user;
+      return this.render_timeout = setTimeout(function() {
+        if (Page.site_info) {
+          if (Page.site_info.cert_user_id) {
+            clearTimeout(this.render_timeout);
+            render_box();
+            return render_user();
+          } else {
+            return Page.cmd("certSelect", [["zeroid.bit"]], (function(_this) {
+              return function(res) {
+                console.log("This isn't right.");
+                clearTimeout(_this.render_timeout);
+                render_box();
+                return render_user();
+              };
+            })(this));
+          }
         }
-      } else {
-        return $("#profile_editor").text("Loading site info...");
-      }
+      }, 1000);
     };
 
     return profile_editor;
@@ -901,7 +913,7 @@
       item_head_version = $("<li></li>");
       item_head_version.attr("id", "item_head_version");
       item_head_version.attr("class", "list_item li_head");
-      item_head_version.text("BETA v0.2.06");
+      item_head_version.text("BETA v0.2.07");
       item_home = $("<li></li>");
       item_home.attr("id", "item_home");
       item_home.attr("class", "list_item li_home");
